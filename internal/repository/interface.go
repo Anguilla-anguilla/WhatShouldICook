@@ -1,4 +1,4 @@
-package main
+package repository
 
 import "context"
 
@@ -6,7 +6,6 @@ type CategoryRepository interface {
 	List(ctx context.Context) ([]*domain.Category, error)
 	GetByID(ctx context.Context, id int64) (*domain.Category, error)
 }
-
 
 type CuisineRepository interface {
 	Create(ctx context.Context, cuisine *domain.Cuisine) error
@@ -24,5 +23,6 @@ type RecipeRepository interface {
 	Delete(ctx context.Context, recipe *domain.Recipe) error
 }
 
-type RationRepository interface {}
+type RationRepository interface{}
+
 // и для дугих тоже

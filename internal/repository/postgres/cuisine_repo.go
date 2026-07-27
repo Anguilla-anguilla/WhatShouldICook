@@ -1,6 +1,7 @@
-package main
+package postgres
 
 import (
+	"WhatShouldICook/internal/domain"
 	"context"
 
 	"github.com/jackc/pgx/v5"
