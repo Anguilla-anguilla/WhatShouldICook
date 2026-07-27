@@ -22,6 +22,7 @@ CREATE TABLE recipe (
 	price decimal(10, 2),
 	store_in_freezer bool DEFAULT FALSE,
 	expires_after int,
+	favorit bool DEFAULT FALSE,
 	category_id bigint REFERENCES category(id) ON DELETE SET NULL,
 	cuisine_id bigint REFERENCES cuisine(id) ON DELETE SET NULL
 );
@@ -47,13 +48,13 @@ CREATE TABLE shopping_list_recipe (
 CREATE TABLE ration (
 	id bigserial PRIMARY KEY,
 	user_id bigint NOT NULL,
+	duration int,
 	created_at timestamp DEFAULT NOW()
 );
 
 CREATE TABLE ration_recipe (
-	ration_id bigint NOT NULL REFERENCES ON ration(id) ON DELETE CASCADE,
-	recipe_id bigint NOT NULL REFERENCES ON recipe(id) ON DELETE CASCADE,
-	duration int,
+	ration_id bigint NOT NULL REFERENCES ration(id) ON DELETE CASCADE,
+	recipe_id bigint NOT NULL REFERENCES recipe(id) ON DELETE CASCADE,
 	PRIMARY KEY (ration_id, recipe_id)
 );
 

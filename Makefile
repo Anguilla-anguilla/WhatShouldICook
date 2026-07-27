@@ -5,7 +5,7 @@ BIN_DIR = bin
 APP_NAME = whatshouldicook
 
 DB_URL = $(shell grep DB_URL .env | cut -d '=' -f2)
-MIGRATE_PATH = internal/migrations
+MIGRATE_PATH = ./internal/migrations
 
 
 build:
