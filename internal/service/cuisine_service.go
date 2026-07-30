@@ -10,14 +10,15 @@ type CuisineService struct {
 	repo *postgres.CuisineRepo
 }
 
-func NewCuisineService(repo *postgres.CategoryRepo) *CuisineService {
+func NewCuisineService(repo *postgres.CuisineRepo) *CuisineService {
 	return &CuisineService{repo: (*postgres.CuisineRepo)(repo)}
 }
 
-func (s CuisineService) Create(ctx context.Context, name, description string, userID int64) (*domain.Cuisine, error) {
+func (s *CuisineService) Create(ctx context.Context, name, description string, userID int64) (*domain.Cuisine, error) {
 	cuisine := &domain.Cuisine{
 		Name:        name,
 		Description: description,
+		UserID: userID,
 	}
 
 	if err := cuisine.Validate(); err != nil {
@@ -45,9 +46,12 @@ func (s *CuisineService) Update(ctx context.Context, cuisine *domain.Cuisine, us
 	if err := cuisine.Validate(); err != nil {
 		return err
 	}
+	if cuisine.UserID != userID {
+		return domain.ErrUnauthorized
+	}
 	return s.repo.Update(ctx, cuisine)
 }
 
 func (s *CuisineService) Delete(ctx context.Context, id, userID int64) error {
-	return s.repo.Delete(ctx, id)
+	return s.repo.Delete(ctx, id, userID)
 }

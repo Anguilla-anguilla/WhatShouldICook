@@ -129,9 +129,9 @@ func (c *CuisineRepo) Update(ctx context.Context, cuisine *domain.Cuisine) error
 	return nil
 }
 
-func (c *CuisineRepo) Delete(ctx context.Context, cuisine domain.Cuisine) error {
+func (c *CuisineRepo) Delete(ctx context.Context, id, userID int64) error {
 	query := `DELETE FROM cuisine WHERE id = $1 AND user_id = $2`
-	result, err := c.pool.Exec(ctx, query, cuisine.ID, cuisine.UserID)
+	result, err := c.pool.Exec(ctx, query, id, userID)
 	if err != nil {
 		return err
 	}
