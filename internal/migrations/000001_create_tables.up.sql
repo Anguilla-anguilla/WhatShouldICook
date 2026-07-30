@@ -2,7 +2,7 @@ CREATE TABLE cuisine (
   id bigserial PRIMARY KEY,
   user_id bigint NOT NULL REFERENCES app_user(id) ON DELETE CASCADE,
   name varchar NOT NULL,
-  description text
+  description text,
   created_at timestamp DEFAULT NOW()
 );
 
@@ -66,7 +66,7 @@ CREATE TABLE ration_recipe (
 CREATE TABLE app_user (
 	id bigserial PRIMARY KEY,
 	username varchar NOT NULL UNIQUE,
-	email varchar NOT NULL UNIQUE
+	email varchar NOT NULL UNIQUE,
 	password_hash TEXT NOT NULL,
 	created_at timestamp DEFAULT NOW()
 );

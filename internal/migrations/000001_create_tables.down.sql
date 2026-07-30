@@ -1,1 +1,1 @@
-DROP TABLE (app_user, ration_recipe, ration, shopping_list_recipe, shopping_list, recipe_ingredient, recipe, ingredient, category, cuisine) CASCADE;
+DROP TABLE app_user, ration_recipe, ration, shopping_list_recipe, shopping_list, recipe_ingredient, recipe, ingredient, category, cuisine CASCADE;
