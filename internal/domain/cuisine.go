@@ -2,6 +2,7 @@ package domain
 
 type Cuisine struct {
 	ID int64
+	UserID int64
 	Name string
 	Description string
 }

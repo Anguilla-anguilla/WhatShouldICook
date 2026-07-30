@@ -33,7 +33,7 @@ func (c *CuisineRepo) List(ctx context.Context, userID int64) ([]*domain.Cuisine
 	query := `
 			SELECT cuisine.id, cuisine.name, cuisine.description
 			FROM cuisine
-			WHERE app_user.id = $1
+			WHERE user_id = $1
 			ORDER BY cuisine.id
 			`
 	rows, err := c.pool.Query(ctx, query, userID)
@@ -64,12 +64,8 @@ func (c *CuisineRepo) List(ctx context.Context, userID int64) ([]*domain.Cuisine
 func (c *CuisineRepo) GetByID(ctx context.Context, id, userID int64) (*domain.Cuisine, error) {
 	query := `
 			SELECT cuisine.id, cuisine.name, cuisine.description
-			FROM app_user
-			JOIN ration ON app_user.id = ration.user_id
-			JOIN ration_recipe ON ration.id = ration_recipe.ration_id
-			JOIN recipe ON recipe.id = ration_recipe.recipe_id
-			JOIN cuisine ON cuisine.id = recipe.cuisine_id
-			WHERE app_user.id = $2 AND cuisine.id = $1
+			FROM cuisine
+			WHERE user_id = $2 AND cuisine.id = $1
 			`
 	var cuisine domain.Cuisine
 	err := c.pool.QueryRow(ctx, query, id, userID).Scan(
@@ -89,12 +85,8 @@ func (c *CuisineRepo) GetByID(ctx context.Context, id, userID int64) (*domain.Cu
 func (c *CuisineRepo) GetByName(ctx context.Context, name string, userID int64) (*domain.Cuisine, error) {
 	query := `
 		SELECT cuisine.id, cuisine.name, cuisine.description
-		FROM app_user
-		JOIN ration ON app_user.id = ration.user_id
-		JOIN ration_recipe ON ration.id = ration_recipe.ration_id
-		JOIN recipe ON recipe.id = ration_recipe.recipe_id
-		JOIN cuisine ON cuisine.id = recipe.cuisine_id
-		WHERE app_user.id = $2 AND cuisine.name = $1
+		FROM cuisine
+		WHERE user_id = $2 AND cuisine.name = $1
 		`
 	var cuisine domain.Cuisine
 	err := c.pool.QueryRow(ctx, query, name, userID).Scan(
