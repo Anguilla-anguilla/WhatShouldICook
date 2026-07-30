@@ -12,7 +12,7 @@ type CuisineHandler struct {
 	service *service.CuisineService
 }
 
-func NewHandler(service *service.CuisineService) *CuisineHandler {
+func NewCuisineHandler(service *service.CuisineService) *CuisineHandler {
 	return &CuisineHandler{service: service}
 }
 
