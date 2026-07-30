@@ -12,8 +12,8 @@ type CuisineHandler struct {
 	service *service.CuisineService
 }
 
-func NewHandler(service service.CuisineService) *CuisineHandler {
-	return &CuisineHandler{service: &service}
+func NewHandler(service *service.CuisineService) *CuisineHandler {
+	return &CuisineHandler{service: service}
 }
 
 func (c *CuisineHandler) Create(res http.ResponseWriter, req *http.Request) {
@@ -39,7 +39,7 @@ func (c *CuisineHandler) Create(res http.ResponseWriter, req *http.Request) {
 		case domain.ErrEmptyName:
 			http.Error(res, "Name cannot be empty", http.StatusBadRequest)
 		case domain.ErrAlreadyExists:
-			http.Error(res, "This category alresdy existx", http.StatusConflict)
+			http.Error(res, "Cuisine already exists", http.StatusConflict)
 		default:
 			http.Error(res, "Internal error", http.StatusInternalServerError)
 		}
@@ -73,7 +73,7 @@ func (c *CuisineHandler) GetByID(res http.ResponseWriter, req *http.Request) {
 	cuisine, err := c.service.GetByID(req.Context(), id, userID)
 	if err != nil {
 		if err == domain.ErrNotFound {
-			http.Error(res, "Category not found", http.StatusNotFound)
+			http.Error(res, "Cuisine not found", http.StatusNotFound)
 			return
 		}
 		http.Error(res, "Internal error", http.StatusInternalServerError)
@@ -90,7 +90,7 @@ func (c *CuisineHandler) List(res http.ResponseWriter, req *http.Request) {
 		http.Error(res, "Unauthorized", http.StatusUnauthorized)
 		return
 	}
-	
+
 	cuisines, err := c.service.List(req.Context(), userID)
 	if err != nil {
 		http.Error(res, "Internal error", http.StatusInternalServerError)
@@ -181,6 +181,3 @@ func (c *CuisineHandler) Delete(res http.ResponseWriter, req *http.Request) {
 	}
 	res.WriteHeader(http.StatusNoContent)
 }
-
-// тут подумать про path (в каких случаях он попадается) и написать
-func extractUUID() {}
