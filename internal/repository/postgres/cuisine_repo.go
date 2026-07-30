@@ -32,11 +32,7 @@ func (c *CuisineRepo) Create(ctx context.Context, cuisine *domain.Cuisine) error
 func (c *CuisineRepo) List(ctx context.Context, userID int64) ([]*domain.Cuisine, error) {
 	query := `
 			SELECT cuisine.id, cuisine.name, cuisine.description
-			FROM app_user
-			JOIN ration ON app_user.id = ration.user_id
-			JOIN ration_recipe ON ration.id = ration_recipe.ration_id
-			JOIN recipe ON recipe.id = ration_recipe.recipe_id
-			JOIN cuisine ON cuisine.id = recipe.cuisine_id
+			FROM cuisine
 			WHERE app_user.id = $1
 			ORDER BY cuisine.id
 			`
@@ -90,6 +86,31 @@ func (c *CuisineRepo) GetByID(ctx context.Context, id, userID int64) (*domain.Cu
 	return &cuisine, nil
 }
 
+func (c *CuisineRepo) GetByName(ctx context.Context, name string, userID int64) (*domain.Cuisine, error) {
+	query := `
+		SELECT cuisine.id, cuisine.name, cuisine.description
+		FROM app_user
+		JOIN ration ON app_user.id = ration.user_id
+		JOIN ration_recipe ON ration.id = ration_recipe.ration_id
+		JOIN recipe ON recipe.id = ration_recipe.recipe_id
+		JOIN cuisine ON cuisine.id = recipe.cuisine_id
+		WHERE app_user.id = $2 AND cuisine.name = $1
+		`
+	var cuisine domain.Cuisine
+	err := c.pool.QueryRow(ctx, query, name, userID).Scan(
+		&cuisine.ID,
+		&cuisine.Name,
+		&cuisine.Description,
+	)
+	if err == pgx.ErrNoRows {
+		return nil, domain.ErrNotFound
+	}
+	if err != nil {
+		return nil, err
+	}
+	return &cuisine, nil
+}
+
 func (c *CuisineRepo) Update(ctx context.Context, cuisine *domain.Cuisine) error {
 	query := `
 		UPDATE cuisine 
@@ -112,7 +133,7 @@ func (c *CuisineRepo) Update(ctx context.Context, cuisine *domain.Cuisine) error
 }
 
 func (c *CuisineRepo) Delete(ctx context.Context, id int64) error {
-	query := `DELETE FROM cuisine WHERE id = $q`
+	query := `DELETE FROM cuisine WHERE id = $1`
 	result, err := c.pool.Exec(ctx, query, id)
 	if err != nil {
 		return err

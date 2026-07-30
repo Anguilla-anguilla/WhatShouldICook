@@ -1,6 +1,9 @@
 package repository
 
-import "context"
+import (
+	"WhatShouldICook/internal/domain"
+	"context"
+)
 
 type CategoryRepository interface {
 	List(ctx context.Context) ([]*domain.Category, error)
@@ -15,13 +18,13 @@ type CuisineRepository interface {
 	Delete(ctx context.Context, id int64) error
 }
 
-type RecipeRepository interface {
-	Create(ctx context.Context, recipe *domain.Recipe) error
-	Read(ctx context.Context, limit, offset int) ([]*domain.Recipe, error)
-	GetByID(ctx context.Context, id int64) (*domain.Recipe, error)
-	Update(ctx context.Context, recipe *domain.Recipe) error
-	Delete(ctx context.Context, recipe *domain.Recipe) error
-}
+// type RecipeRepository interface {
+// 	Create(ctx context.Context, recipe *domain.Recipe) error
+// 	Read(ctx context.Context, limit, offset int) ([]*domain.Recipe, error)
+// 	GetByID(ctx context.Context, id int64) (*domain.Recipe, error)
+// 	Update(ctx context.Context, recipe *domain.Recipe) error
+// 	Delete(ctx context.Context, recipe *domain.Recipe) error
+// }
 
 type RationRepository interface{}
 

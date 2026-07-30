@@ -1,30 +1,35 @@
 CREATE TABLE cuisine ( 
   id bigserial PRIMARY KEY,
+  user_id bigint NOT NULL REFERENCES app_user(id) ON DELETE CASCADE,
   name varchar NOT NULL,
   description text
+  created_at timestamp DEFAULT NOW()
 );
 
 CREATE TABLE category ( 
   id bigserial PRIMARY KEY,
-  name varchar NOT NULL
+  name varchar UNIQUE NOT NULL
 );
 
 CREATE TABLE ingredient ( 
 	id bigserial PRIMARY KEY,
-	name varchar NOT NULL
+	name varchar UNIQUE NOT NULL
 );
 
 CREATE TABLE recipe ( 
 	id bigserial PRIMARY KEY,
+	user_id bigint NOT NULL REFERENCES app_user(id) ON DELETE CASCADE,
+	is_public bool DEFAULT FALSE,
 	name varchar NOT NULL,
-	description text NOT NULL,
+	description text,
 	cooking_time int,
 	price decimal(10, 2),
 	store_in_freezer bool DEFAULT FALSE,
 	expires_after int,
-	favorit bool DEFAULT FALSE,
+	favorite bool DEFAULT FALSE,
 	category_id bigint REFERENCES category(id) ON DELETE SET NULL,
-	cuisine_id bigint REFERENCES cuisine(id) ON DELETE SET NULL
+	cuisine_id bigint REFERENCES cuisine(id) ON DELETE SET NULL,
+	created_at timestamp DEFAULT NOW()
 );
 
 CREATE TABLE recipe_ingredient (
@@ -47,8 +52,8 @@ CREATE TABLE shopping_list_recipe (
 
 CREATE TABLE ration (
 	id bigserial PRIMARY KEY,
-	user_id bigint NOT NULL,
-	duration int,
+	user_id bigint NOT NULL REFERENCES app_user(id) ON DELETE CASCADE,
+	duration int DEFAULT 7,
 	created_at timestamp DEFAULT NOW()
 );
 
@@ -62,4 +67,6 @@ CREATE TABLE app_user (
 	id bigserial PRIMARY KEY,
 	username varchar NOT NULL UNIQUE,
 	email varchar NOT NULL UNIQUE
+	password_hash TEXT NOT NULL,
+	created_at timestamp DEFAULT NOW()
 );

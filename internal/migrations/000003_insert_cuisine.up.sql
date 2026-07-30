@@ -1,0 +1,1 @@
+INSERT INTO cuisine (name, description) VALUES ('default', 'You can create your own ration categories')
