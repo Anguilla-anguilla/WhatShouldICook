@@ -57,7 +57,7 @@ func main() {
 
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
-	r.Use(middleware.Recoverer)
+	r.Use(middleware.Recoverer) // при панике возвращает 500 не роняя сервер
 	r.Use(middleware.Timeout(60 * time.Second))
 
 	r.Route("/api/v1/cuisines", func(r chi.Router) {
