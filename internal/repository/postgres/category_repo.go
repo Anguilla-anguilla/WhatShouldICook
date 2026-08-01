@@ -66,3 +66,21 @@ func (c *CategoryRepo) GetByID(ctx context.Context, id int64) (*domain.Category,
 
 	return &category, nil
 }
+
+func (c *CategoryRepo) GetByName(ctx context.Context, name string) (*domain.Category, error) {
+	query := `
+		SELECT id, name FROM category WHERE name = $1
+		`
+	var category domain.Category
+	err := c.pool.QueryRow(ctx, query, name).Scan(
+		&category.ID,
+		&category.Name,
+	)
+	if err == pgx.ErrNoRows {
+		return nil, domain.ErrNotFound
+	}
+	if err != nil {
+		return nil, err
+	}
+	return &category, nil
+}
