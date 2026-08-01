@@ -8,6 +8,7 @@ import (
 type CategoryRepository interface {
 	List(ctx context.Context) ([]*domain.Category, error)
 	GetByID(ctx context.Context, id int64) (*domain.Category, error)
+	GetByName(ctx context.Context, name string) (*domain.Category, error)
 }
 
 type CuisineRepository interface {
