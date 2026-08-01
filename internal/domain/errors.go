@@ -13,4 +13,6 @@ var (
 	ErrEmptyDescription = errors.New("Error: no description provided")
 	ErrEmptyPassword    = errors.New("Error: no password provided")
 	ErrInvalidEmail     = errors.New("Error: invalid email")
+	ErrInvalidPassword  = errors.New("Error: invalid password")
+	ErrPasswordTooShort = errors.New("Error: password is shorter than 8 symbols")
 )

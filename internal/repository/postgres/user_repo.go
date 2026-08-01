@@ -76,6 +76,28 @@ func (u *UserRepo) GetByUserName(ctx context.Context, name string) (*domain.User
 	return &user, nil
 }
 
+func (u *UserRepo) GetByEmail(ctx context.Context, email string) (*domain.User, error) {
+	query := `
+		SELECT id, username, email, password_hash
+		FROM user
+		WHERE email = $1
+		`
+	var user domain.User
+	err := u.pool.QueryRow(ctx, query, email). Scan(
+		&user.ID,
+		&user.UserName,
+		&user.Email,
+		&user.PasswordHash,
+	)
+	if err == pgx.ErrNoRows {
+		return nil, domain.ErrNotFound
+	}
+	if err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+
 func (u *UserRepo) Update(ctx context.Context, user *domain.User) error {
 	query := `
 		UPDATE app_user

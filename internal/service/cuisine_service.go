@@ -2,23 +2,23 @@ package service
 
 import (
 	"WhatShouldICook/internal/domain"
-	"WhatShouldICook/internal/repository/postgres"
+	"WhatShouldICook/internal/repository"
 	"context"
 )
 
 type CuisineService struct {
-	repo *postgres.CuisineRepo
+	repo repository.CuisineRepository
 }
 
-func NewCuisineService(repo *postgres.CuisineRepo) *CuisineService {
-	return &CuisineService{repo: (*postgres.CuisineRepo)(repo)}
+func NewCuisineService(repo repository.CuisineRepository) *CuisineService {
+	return &CuisineService{repo: repo}
 }
 
 func (s *CuisineService) Create(ctx context.Context, name, description string, userID int64) (*domain.Cuisine, error) {
 	cuisine := &domain.Cuisine{
 		Name:        name,
 		Description: description,
-		UserID: userID,
+		UserID:      userID,
 	}
 
 	if err := cuisine.Validate(); err != nil {
