@@ -15,9 +15,14 @@ type ServerConfig struct {
 }
 
 type DatabaseConfig struct {
-	URL      string `env:"URL" env-required:"true"`
+	URL string `env:"URL" env-required:"true"`
 	// MaxOpenConns string `env:"MAX_OPEN_CONNS" env-default:"20"`
 	// MaxIdleConns string `env:"MAX_IDLE_CONNS" env-default:"4"`
+}
+
+type JWTConfig struct {
+	Secret string `env:"JWT_SECRET" env-required:"true"`
+	TTL    int    `env:"JWT_TTL" env-default:"24"`
 }
 
 // type App struct {
@@ -28,6 +33,7 @@ type DatabaseConfig struct {
 type Config struct {
 	Server   ServerConfig   `env-prefix:"SERVER_"`
 	Database DatabaseConfig `env-prefix:"DB_"`
+	JWT      JWTConfig
 }
 
 func LoadConfig() (*Config, error) {

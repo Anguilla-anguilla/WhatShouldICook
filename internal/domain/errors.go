@@ -15,4 +15,5 @@ var (
 	ErrInvalidEmail     = errors.New("Error: invalid email")
 	ErrInvalidPassword  = errors.New("Error: invalid password")
 	ErrPasswordTooShort = errors.New("Error: password is shorter than 8 symbols")
+	ErrInvalidScore     = errors.New("Error: value is less or more than intended")
 )
