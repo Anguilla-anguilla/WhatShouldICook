@@ -51,6 +51,7 @@ func (c *CuisineHandler) Create(res http.ResponseWriter, req *http.Request) {
 	json.NewEncoder(res).Encode(cuisine)
 }
 
+// мб тут тоже гет бай нэйм нужна? надо подумотьб..
 func (c *CuisineHandler) GetByID(res http.ResponseWriter, req *http.Request) {
 	idStr := req.PathValue("id")
 	if idStr == "" {

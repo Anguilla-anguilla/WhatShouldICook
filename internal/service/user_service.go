@@ -82,15 +82,27 @@ func (s *UserService) GetByUserName(ctx context.Context, userName string) (*doma
 	return s.repo.GetByUserName(ctx, userName)
 }
 
-// Тут и в кухнях точно должна быть обертка?
-func (s *UserService) Update(ctx context.Context, newUser *domain.User) error {
-	if err := newUser.Validate(); err != nil {
+// не уверена, что оно будет работать. Мэй би, сделать, как в пассворде? хотя хз.
+func (s *UserService) UpdateProfile(ctx context.Context, id int64, username, email string) error {
+	user, err := s.repo.GetByID(ctx, id)
+	if err != nil {
 		return err
 	}
-	return s.repo.Update(ctx, newUser)
+	user.UserName = username
+	user.Email = email
+
+	if err := user.Validate(); err != nil {
+		return err
+	}
+	return s.repo.Update(ctx, user)
 }
 
-func (s *UserService) UpdatePassword(ctx context.Context, user *domain.User, oldPassword, newPassword string) error {
+func (s *UserService) UpdatePassword(ctx context.Context, id int64, oldPassword, newPassword string) error {
+	user, err := s.repo.GetByID(ctx, id)
+	if err != nil {
+		return err
+	}
+
 	if err := comparePassword(oldPassword, user.PasswordHash); err != nil {
 		return domain.ErrInvalidPassword
 	}
@@ -111,14 +123,14 @@ func (s *UserService) UpdatePassword(ctx context.Context, user *domain.User, old
 		PasswordHash: newHash,
 	}
 
-	if err = s.Update(ctx, newPassUser); err != nil {
+	if err = s.repo.Update(ctx, newPassUser); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (s *UserService) Delete(ctx context.Context, user *domain.User) error {
-	return s.repo.Delete(ctx, user.ID)
+func (s *UserService) Delete(ctx context.Context, id int64) error {
+	return s.repo.Delete(ctx, id)
 }
 
 func hashPassword(password string) (hash string, err error) {
