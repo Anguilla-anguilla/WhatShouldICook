@@ -29,7 +29,7 @@ func (a *AuthService) GenerateToken(user *domain.User) (string, error) {
 		"exp":      time.Now().Add(a.ttl).Unix(),
 	}
 
-	token := jwt.NewWithClaims(jwt.SigningMethodES256, claims)
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString([]byte(a.secret))
 }
 

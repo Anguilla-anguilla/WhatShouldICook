@@ -22,19 +22,19 @@ func (s *UserService) Register(ctx context.Context, username, email, password st
 	}
 
 	_, err := s.repo.GetByUserName(ctx, username)
-	if err != domain.ErrNotFound {
-		return nil, domain.ErrAlreadyExists
-	}
-	if err != nil {
+	if err != nil && err != domain.ErrNotFound {
 		return nil, err
+	}
+	if err == nil {
+		return nil, domain.ErrAlreadyExists
 	}
 
 	_, err = s.repo.GetByEmail(ctx, email)
-	if err != domain.ErrNotFound {
-		return nil, domain.ErrAlreadyExists
-	}
-	if err != nil {
+	if err != nil && err != domain.ErrNotFound {
 		return nil, err
+	}
+	if err == nil {
+		return nil, domain.ErrAlreadyExists
 	}
 
 	hash, err := hashPassword(password)
@@ -116,14 +116,9 @@ func (s *UserService) UpdatePassword(ctx context.Context, id int64, oldPassword,
 		return err
 	}
 
-	newPassUser := &domain.User{
-		ID:           user.ID,
-		UserName:     user.UserName,
-		Email:        user.Email,
-		PasswordHash: newHash,
-	}
+	user.PasswordHash = newHash
 
-	if err = s.repo.Update(ctx, newPassUser); err != nil {
+	if err = s.repo.Update(ctx, user); err != nil {
 		return err
 	}
 	return nil

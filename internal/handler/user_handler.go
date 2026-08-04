@@ -29,12 +29,13 @@ func (h *UserHandler) GetByID(res http.ResponseWriter, req *http.Request) {
 			return
 		}
 		http.Error(res, "Internal error", http.StatusInternalServerError)
+		return
 	}
 	res.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(res).Encode(user)
 }
 
-func (h *UserHandler) UpdateProfile(res http.ResponseWriter, req http.Request) {
+func (h *UserHandler) UpdateProfile(res http.ResponseWriter, req *http.Request) {
 	id, ok := req.Context().Value("userID").(int64)
 	if !ok {
 		http.Error(res, "Unauthorized", http.StatusUnauthorized)
@@ -70,7 +71,7 @@ func (h *UserHandler) UpdateProfile(res http.ResponseWriter, req http.Request) {
 	})
 }
 
-func (h *UserHandler) UpdatePassword(res http.ResponseWriter, req http.Request) {
+func (h *UserHandler) UpdatePassword(res http.ResponseWriter, req *http.Request) {
 	id, ok := req.Context().Value("userID").(int64)
 	if !ok {
 		http.Error(res, "Unauthorized", http.StatusUnauthorized)
@@ -105,7 +106,7 @@ func (h *UserHandler) UpdatePassword(res http.ResponseWriter, req http.Request) 
 	})
 }
 
-func (h *UserHandler) Delete(res http.ResponseWriter, req http.Request) {
+func (h *UserHandler) Delete(res http.ResponseWriter, req *http.Request) {
 	id, ok := req.Context().Value("userID").(int64)
 	if !ok {
 		http.Error(res, "Unauthorized", http.StatusUnauthorized)
