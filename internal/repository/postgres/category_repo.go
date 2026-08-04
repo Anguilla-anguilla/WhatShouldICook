@@ -45,12 +45,11 @@ func (c *CategoryRepo) List(ctx context.Context) ([]*domain.Category, error) {
 	return categories, nil
 }
 
-// Вот эту пока не уверена, как буду юзать и нужно ли настраивать под пользователя
 func (c *CategoryRepo) GetByID(ctx context.Context, id int64) (*domain.Category, error) {
 	query := `
 		SELECT id, name 
 		FROM category 
-		WHERE id = $1;`
+		WHERE id = $1`
 
 	var category domain.Category
 	err := c.pool.QueryRow(ctx, query, id).Scan(

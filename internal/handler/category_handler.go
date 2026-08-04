@@ -16,7 +16,7 @@ func NewCategoryHandler(service *service.CategoryService) *CategoryHandler {
 	return &CategoryHandler{service: service}
 }
 
-func (h *CategoryHandler) List(res http.ResponseWriter, req http.Request) {
+func (h *CategoryHandler) List(res http.ResponseWriter, req *http.Request) {
 	categories, err := h.service.List(req.Context())
 	if err != nil {
 		http.Error(res, "Internal error", http.StatusInternalServerError)
@@ -26,7 +26,7 @@ func (h *CategoryHandler) List(res http.ResponseWriter, req http.Request) {
 	json.NewEncoder(res).Encode(categories)
 }
 
-func (h *CategoryHandler) GetByID(res http.ResponseWriter, req http.Request) {
+func (h *CategoryHandler) GetByID(res http.ResponseWriter, req *http.Request) {
 	idStr := req.PathValue("id")
 	if idStr == "" {
 		http.Error(res, "Missing id", http.StatusBadRequest)
@@ -52,8 +52,12 @@ func (h *CategoryHandler) GetByID(res http.ResponseWriter, req http.Request) {
 	json.NewEncoder(res).Encode(category)
 }
 
-func (h *CategoryHandler) GetByName(res http.ResponseWriter, req http.Request) {
+func (h *CategoryHandler) GetByName(res http.ResponseWriter, req *http.Request) {
 	name := req.PathValue("name")
+	if name == "" {
+		http.Error(res, "Missing name", http.StatusBadRequest)
+		return
+	}
 
 	category, err := h.service.GetByName(req.Context(), name)
 	if err != nil {

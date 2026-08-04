@@ -15,7 +15,7 @@ func NewCategoryService(repo repository.CategoryRepository) *CategoryService {
 }
 
 func (s *CategoryService) List(ctx context.Context) ([]*domain.Category, error) {
-	return s.repo.List(ctx,)
+	return s.repo.List(ctx)
 }
 
 func (s *CategoryService) GetByID(ctx context.Context, id int64) (*domain.Category, error) {
