@@ -2,17 +2,16 @@ package service
 
 import (
 	"WhatShouldICook/internal/domain"
-	"WhatShouldICook/internal/repository"
 	"context"
 
 	"golang.org/x/crypto/bcrypt"
 )
 
 type UserService struct {
-	repo repository.UserRepository
+	repo UserRepository
 }
 
-func NewUserService(repo repository.UserRepository) *UserService {
+func NewUserService(repo UserRepository) *UserService {
 	return &UserService{repo: repo}
 }
 

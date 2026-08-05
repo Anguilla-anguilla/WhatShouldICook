@@ -2,15 +2,14 @@ package service
 
 import (
 	"WhatShouldICook/internal/domain"
-	"WhatShouldICook/internal/repository"
 	"context"
 )
 
 type CuisineService struct {
-	repo repository.CuisineRepository
+	repo CuisineRepository
 }
 
-func NewCuisineService(repo repository.CuisineRepository) *CuisineService {
+func NewCuisineService(repo CuisineRepository) *CuisineService {
 	return &CuisineService{repo: repo}
 }
 

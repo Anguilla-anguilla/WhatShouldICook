@@ -2,15 +2,14 @@ package service
 
 import (
 	"WhatShouldICook/internal/domain"
-	"WhatShouldICook/internal/repository"
 	"context"
 )
 
 type CategoryService struct {
-	repo repository.CategoryRepository
+	repo CategoryRepository
 }
 
-func NewCategoryService(repo repository.CategoryRepository) *CategoryService {
+func NewCategoryService(repo CategoryRepository) *CategoryService {
 	return &CategoryService{repo: repo}
 }
 

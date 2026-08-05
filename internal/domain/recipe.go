@@ -3,42 +3,45 @@ package domain
 import "strings"
 
 // ДОБАВИТЬ НОВЫЕ МИГРАЦИИ
-// BOOL can_be_stored_without_fridge
 type Recipe struct {
 	ID              int64
-	Name            string
-	IngredientID    int64
-	Description     string // мэй би убрать not null?
+	Name            string //not null
+	UserID          int64
+	Description     string // убрать not null. Если блюдо состоит из одного банана - то не нужно ничего писать
 	CookingTime     int64
 	Price           float64
 	ExpiresAfter    int64
 	StoreInFreezer  bool
 	Favorite        bool
-	FridgelessStore int64 // сделаю бальную градацию от 0 до 2, в зависимости от выживаемости еды
-	CategoryID      int64
-	CuisineID       int64
+	FridgelessStore int64 // сделаю бальную градацию от 0 до 3, в зависимости от выживаемости еды
+	Public          bool
+	// Hidden			bool потом добавлю, а то и так много пока всего
+	CategoryID int64 // not null
+	CuisineID  int64
+	CreatedAt  int64
 }
 
-// Validate:
-// NotNull: ingredient (потом)
-
-
-// хз, наверное стоит переделать
-func (r *Recipe) ValidateNameDescription() error {
-	name := strings.ReplaceAll(r.Name, " ", "")
-	description := strings.ReplaceAll(r.Description, " ", "")
-	if name == "" {
-		return ErrEmptyName
+func (r *Recipe) Validate() error {
+	if err := r.ValidateName(); err != nil {
+		return err
 	}
-	if description == "" {
-		return ErrEmptyDescription
+	if err := r.ValidateFridgelessStore(); err != nil {
+		return err
 	}
 	return nil
 }
 
-// Обозначить, как enum
-// func (r *Recipe) ValidateFridgelessStore() error {
-// 	if r.FridgelessStore < 0 || r.FridgelessStore > 3 {
-// 		return ErrInvalidScore
-// 	}
-// }
+func (r *Recipe) ValidateName() error {
+	name := strings.ReplaceAll(r.Name, " ", "")
+	if name == "" {
+		return ErrEmptyName
+	}
+	return nil
+}
+
+func (r *Recipe) ValidateFridgelessStore() error {
+	if r.FridgelessStore < 0 || r.FridgelessStore > 3 {
+		return ErrInvalidRange
+	}
+	return nil
+}
