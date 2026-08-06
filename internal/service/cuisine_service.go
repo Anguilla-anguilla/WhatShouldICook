@@ -41,6 +41,7 @@ func (s *CuisineService) List(ctx context.Context, userID int64) ([]*domain.Cuis
 	return s.repo.List(ctx, userID)
 }
 
+// метод неправильный. Переписать
 func (s *CuisineService) Update(ctx context.Context, cuisine *domain.Cuisine, userID int64) error {
 	if err := cuisine.Validate(); err != nil {
 		return err

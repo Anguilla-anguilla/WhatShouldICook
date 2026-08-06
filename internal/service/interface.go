@@ -29,6 +29,15 @@ type UserRepository interface {
 	Delete(ctx context.Context, id int64) error
 }
 
+type IngredientRepository interface {
+	Create(ctx context.Context, ingredient *domain.Ingredient) error
+	List(ctx context.Context) ([]*domain.Ingredient, error)
+	GetByID(ctx context.Context, id int64) (*domain.Ingredient, error)
+	GetByName(ctx context.Context, name string) (*domain.Ingredient, error)
+	Update(ctx context.Context, ingredient *domain.Ingredient) error
+	Delete(ctx context.Context, id int64) error
+}
+
 // type RecipeRepository interface {
 // 	Create(ctx context.Context, recipe *domain.Recipe) error
 // 	Read(ctx context.Context, limit, offset int) ([]*domain.Recipe, error)
