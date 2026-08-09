@@ -48,8 +48,9 @@ CREATE TABLE recipe_ingredient (
 );
 
 CREATE TABLE shopping_list ( 
-	id bigserial PRIMARY KEY,
-	created_at timestamp DEFAULT NOW()
+    id bigserial PRIMARY KEY,
+    -- ration_id bigint NOT NULL REFERENCES ration(id) ON DELETE CASCADE, ДОБАВИТЬ!!!
+    created_at timestamp DEFAULT NOW()
 );
 
 CREATE TABLE shopping_list_recipe (

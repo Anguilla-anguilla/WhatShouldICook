@@ -52,3 +52,9 @@ type RationRepository interface {
 	GetByID(ctx context.Context, id, userID int64) (*domain.Ration, error)
 	Delete(ctx context.Context, id, userID int64) error
 }
+
+type ShoppingListRepository interface {
+	Create(ctx context.Context, shopping_list *domain.ShoppingList) error
+	GetByID(ctx context.Context, id, userID int64) (*domain.ShoppingList, error)
+	Delete(ctx context.Context, id, userID int64) error
+}
