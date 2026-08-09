@@ -47,6 +47,8 @@ type RecipeRepository interface {
 	Delete(ctx context.Context, id, userID int64) error
 }
 
-type RationRepository interface{}
-
-// и для дугих тоже
+type RationRepository interface {
+	Create(ctx context.Context, ration *domain.Ration) error
+	GetByID(ctx context.Context, id, userID int64) (*domain.Ration, error)
+	Delete(ctx context.Context, id, userID int64) error
+}
