@@ -38,13 +38,14 @@ type IngredientRepository interface {
 	Delete(ctx context.Context, id int64) error
 }
 
-// type RecipeRepository interface {
-// 	Create(ctx context.Context, recipe *domain.Recipe) error
-// 	Read(ctx context.Context, limit, offset int) ([]*domain.Recipe, error)
-// 	GetByID(ctx context.Context, id int64) (*domain.Recipe, error)
-// 	Update(ctx context.Context, recipe *domain.Recipe) error
-// 	Delete(ctx context.Context, recipe *domain.Recipe) error
-// }
+type RecipeRepository interface {
+	Create(ctx context.Context, recipe *domain.Recipe) error
+	List(ctx context.Context, filters RecipeFilters) ([]*domain.Recipe, error)
+	GetByID(ctx context.Context, id, userID int64) (*domain.Recipe, error)
+	GetByName(ctx context.Context, name string, userID int64) (*domain.Recipe, error)
+	Update(ctx context.Context, recipe *domain.Recipe) error
+	Delete(ctx context.Context, id, userID int64) error
+}
 
 type RationRepository interface{}
 

@@ -1,4 +1,4 @@
-package repository
+package service
 
 type RecipeFilters struct {
 	UserID     int64

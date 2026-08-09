@@ -2,7 +2,7 @@ package postgres
 
 import (
 	"WhatShouldICook/internal/domain"
-	"WhatShouldICook/internal/repository"
+	"WhatShouldICook/internal/service"
 	"context"
 	"fmt"
 
@@ -52,7 +52,7 @@ func (r RecipeRepo) Create(ctx context.Context, recipe *domain.Recipe) error {
 	return err
 }
 
-func (r *RecipeRepo) ListAll(ctx context.Context, filters repository.RecipeFilters) ([]*domain.Recipe, error) {
+func (r *RecipeRepo) List(ctx context.Context, filters service.RecipeFilters) ([]*domain.Recipe, error) {
 	query := `
 		SELECT id,
 				name,
@@ -136,7 +136,7 @@ func (r *RecipeRepo) ListAll(ctx context.Context, filters repository.RecipeFilte
 	return recipes, nil
 }
 
-func (r *RecipeRepo) GetByID(ctx context.Context, id int64) (*domain.Recipe, error) {
+func (r *RecipeRepo) GetByID(ctx context.Context, id, userID int64) (*domain.Recipe, error) {
 	query := `
 		SELECT id,
 				name,
@@ -152,10 +152,10 @@ func (r *RecipeRepo) GetByID(ctx context.Context, id int64) (*domain.Recipe, err
 				category_id,
 				cuisine_id
 		FROM recipe
-		WHERE id = $1
+		WHERE id = $1 AND user_id = $2
 	`
 	var recipe domain.Recipe
-	err := r.pool.QueryRow(ctx, query, id).Scan(
+	err := r.pool.QueryRow(ctx, query, id, userID).Scan(
 		&recipe.ID,
 		&recipe.Name,
 		&recipe.UserID,
@@ -179,7 +179,7 @@ func (r *RecipeRepo) GetByID(ctx context.Context, id int64) (*domain.Recipe, err
 	return &recipe, nil
 }
 
-func (r *RecipeRepo) GetByName(ctx context.Context, name string) (*domain.Recipe, error) {
+func (r *RecipeRepo) GetByName(ctx context.Context, name string, userID int64) (*domain.Recipe, error) {
 	query := `
 		SELECT id,
 				name,
@@ -195,10 +195,10 @@ func (r *RecipeRepo) GetByName(ctx context.Context, name string) (*domain.Recipe
 				category_id,
 				cuisine_id
 		FROM recipe
-		WHERE name = $1
+		WHERE name = $1 AND user_id = $2
 	`
 	var recipe domain.Recipe
-	err := r.pool.QueryRow(ctx, query, name).Scan(
+	err := r.pool.QueryRow(ctx, query, name, userID).Scan(
 		&recipe.ID,
 		&recipe.Name,
 		&recipe.UserID,
