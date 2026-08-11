@@ -16,27 +16,27 @@ func NewRationRepo(pool *pgxpool.Pool) *RationRepo {
 	return &RationRepo{pool: pool}
 }
 
-func (c *RationRepo) Create(ctx context.Context, ration *domain.Ration) error {
+func (r *RationRepo) Create(ctx context.Context, ration *domain.Ration) error {
 	query := `
 		INSERT INTO ration (user_id, duration)
 		VALUES ($1, $2)
 		RETURNING id
 		`
-	err := c.pool.QueryRow(ctx, query,
+	err := r.pool.QueryRow(ctx, query,
 		ration.UserID,
 		ration.Duration,
 	).Scan(&ration.ID)
 	return err
 }
 
-func (c *RationRepo) GetByID(ctx context.Context, id, userID int64) (*domain.Ration, error) {
+func (r *RationRepo) GetByID(ctx context.Context, id, userID int64) (*domain.Ration, error) {
 	query := `
 			SELECT id, user_id, duration
 			FROM ration
 			WHERE user_id = $2 AND id = $1
 			`
 	var ration domain.Ration
-	err := c.pool.QueryRow(ctx, query, id, userID).Scan(
+	err := r.pool.QueryRow(ctx, query, id, userID).Scan(
 		&ration.ID,
 		&ration.UserID,
 		&ration.Duration,
@@ -50,9 +50,9 @@ func (c *RationRepo) GetByID(ctx context.Context, id, userID int64) (*domain.Rat
 	return &ration, nil
 }
 
-func (c *RationRepo) Delete(ctx context.Context, id, userID int64) error {
+func (r *RationRepo) Delete(ctx context.Context, id, userID int64) error {
 	query := `DELETE FROM ration WHERE id = $1 AND user_id = $2`
-	result, err := c.pool.Exec(ctx, query, id, userID)
+	result, err := r.pool.Exec(ctx, query, id, userID)
 	if err != nil {
 		return err
 	}

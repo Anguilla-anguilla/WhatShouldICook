@@ -73,6 +73,7 @@ func (h *IngredientHandler) GetByID(res http.ResponseWriter, req *http.Request) 
 		default:
 			http.Error(res, "Internal server error", http.StatusInternalServerError)
 		}
+		return
 	}
 	res.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(res).Encode(ingredient)
@@ -131,7 +132,7 @@ func (h *IngredientHandler) Delete(res http.ResponseWriter, req *http.Request) {
 
 	if err := h.service.Delete(req.Context(), id); err != nil {
 		if err == domain.ErrNotFound {
-			http.Error(res, "Cuisine not found", http.StatusNotFound)
+			http.Error(res, "Ingredient not found", http.StatusNotFound)
 			return
 		}
 		http.Error(res, "Internal error", http.StatusInternalServerError)

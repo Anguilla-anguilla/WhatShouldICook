@@ -1,6 +1,9 @@
 package domain
 
-import "strings"
+import (
+	"strings"
+	"time"
+)
 
 // ДОБАВИТЬ НОВЫЕ МИГРАЦИИ
 type Recipe struct {
@@ -18,20 +21,33 @@ type Recipe struct {
 	// Hidden			bool потом добавлю, а то и так много пока всего
 	CategoryID int64 // not null
 	CuisineID  int64
-	CreatedAt  int64
+	CreatedAt  time.Time
 }
 
 func (r *Recipe) Validate() error {
-	if err := r.ValidateName(); err != nil {
+	if err := r.validateName(); err != nil {
 		return err
 	}
-	if err := r.ValidateFridgelessStore(); err != nil {
+	if err := r.validateFridgelessStore(); err != nil {
+		return err
+	}
+	if err := r.validateFK(r.CategoryID, r.CuisineID); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (r *Recipe) ValidateName() error {
+func (r *Recipe) validateFK(category, cuisine int64) error {
+	if category == 0 {
+		return ErrEmptyCategory
+	}
+	if cuisine == 0 {
+		return  ErrEmptyCuisine
+	}
+	return nil
+}
+
+func (r *Recipe) validateName() error {
 	name := strings.ReplaceAll(r.Name, " ", "")
 	if name == "" {
 		return ErrEmptyName
@@ -39,7 +55,7 @@ func (r *Recipe) ValidateName() error {
 	return nil
 }
 
-func (r *Recipe) ValidateFridgelessStore() error {
+func (r *Recipe) validateFridgelessStore() error {
 	if r.FridgelessStore < 0 || r.FridgelessStore > 3 {
 		return ErrInvalidRange
 	}

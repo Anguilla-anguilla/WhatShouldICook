@@ -33,18 +33,23 @@ func (s *IngredientService) List(ctx context.Context) ([]*domain.Ingredient, err
 }
 
 func (s *IngredientService) GetByID(ctx context.Context, id int64) (*domain.Ingredient, error) {
-	return s.GetByID(ctx, id)
+	return s.repo.GetByID(ctx, id)
 }
 
 func (s *IngredientService) GetByName(ctx context.Context, name string) (*domain.Ingredient, error) {
-	return s.GetByName(ctx, name)
+	return s.repo.GetByName(ctx, name)
 }
 
 func (s *IngredientService) Update(ctx context.Context, id int64, name string) error {
-	ingredient, err := s.GetByID(ctx, id)
+	ingredient, err := s.repo.GetByID(ctx, id)
 	if err != nil {
 		return err
 	}
+
+	if found, _ := s.repo.GetByName(ctx, name); found != nil && found.ID != id {
+		return domain.ErrAlreadyExists
+	}
+
 	ingredient.Name = name
 	if err = ingredient.Validate(); err != nil {
 		return err

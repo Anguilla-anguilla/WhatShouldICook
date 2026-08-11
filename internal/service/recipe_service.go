@@ -82,7 +82,7 @@ func (s *RecipeService) Update(ctx context.Context, recipeReq CreateRecipeReques
 	if err := recipe.Validate(); err != nil {
 		return err
 	}
-	if found, _ := s.repo.GetByName(ctx, recipe.Name, userID); found == nil {
+	if found, _ := s.repo.GetByName(ctx, recipe.Name, userID); found != nil && found.ID != id {
 		return domain.ErrNotFound
 	}
 	return s.repo.Update(ctx, recipe)

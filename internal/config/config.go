@@ -7,6 +7,9 @@ import (
 	"github.com/joho/godotenv"
 )
 
+// ПЕРЕПИСАТЬ С УЧЕТОМ ФУНКЦИОНАЛЬНЫХ ОПЦИЙ!!!
+// (НАВЕРНОЕ. МОЖЕТ, ДЛЯ ТАКОГО ПРОЕКТА ОНО НЕ НУЖНО,
+// ТАК КАК У МЕНЯ НЕТ ОПЦИОНАЛЬНЫХ ПАРАМЕТРОВ)
 type ServerConfig struct {
 	Port string `env:"PORT" env-default:"8080"`
 	Host string `env:"HOST" env-default:"localhost"`

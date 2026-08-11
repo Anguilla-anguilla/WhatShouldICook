@@ -16,6 +16,7 @@ func NewRecipeHandler(service *service.RecipeService) *RecipeHandler {
 	return &RecipeHandler{service: service}
 }
 
+// ДОБАВИТЬ БОЛЬШЕ ОБРАБОТОК ОШИБОК
 func (h *RecipeHandler) Create(res http.ResponseWriter, req *http.Request) {
 	userID, ok := req.Context().Value("userID").(int64)
 	if !ok {
@@ -83,7 +84,7 @@ func (h *RecipeHandler) List(res http.ResponseWriter, req *http.Request) {
 		filters.Favorite = &fav
 	}
 
-	if public := req.URL.Query().Get("category_id"); public != "" {
+	if public := req.URL.Query().Get("public"); public != "" {
 		pub, err := strconv.ParseBool(public)
 		if err != nil {
 			http.Error(res, "Wrong params", http.StatusBadRequest)

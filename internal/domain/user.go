@@ -13,19 +13,19 @@ type User struct {
 }
 
 func (u *User) Validate() (err error) {
-	if err = u.ValidateName(); err != nil {
+	if err = u.validateName(); err != nil {
 		return err
 	}
-	if err = u.ValidateEmail(); err != nil {
+	if err = u.validateEmail(); err != nil {
 		return err
 	}
-	if err = u.ValidatePassword(); err != nil {
+	if err = u.validatePassword(); err != nil {
 		return err
 	}
 	return
 }
 
-func (u *User) ValidateName() error {
+func (u *User) validateName() error {
 	str := strings.ReplaceAll(u.UserName, " ", "")
 	if str == "" {
 		return ErrEmptyName
@@ -33,7 +33,7 @@ func (u *User) ValidateName() error {
 	return nil
 }
 
-func (u *User) ValidateEmail() error {
+func (u *User) validateEmail() error {
 	emailRegex := regexp.MustCompile(`^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`)
 	if !emailRegex.MatchString(u.Email) {
 		return ErrInvalidEmail
@@ -41,7 +41,7 @@ func (u *User) ValidateEmail() error {
 	return nil
 }
 
-func (u *User) ValidatePassword() error {
+func (u *User) validatePassword() error {
 	if u.PasswordHash == "" {
 		return ErrEmptyPassword
 	}

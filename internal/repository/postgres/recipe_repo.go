@@ -18,7 +18,7 @@ func NewRecipeRepo(pool *pgxpool.Pool) *RecipeRepo {
 	return &RecipeRepo{pool: pool}
 }
 
-func (r RecipeRepo) Create(ctx context.Context, recipe *domain.Recipe) error {
+func (r *RecipeRepo) Create(ctx context.Context, recipe *domain.Recipe) error {
 	query := `
 		INSERT INTO recipe (name,
 							user_id,

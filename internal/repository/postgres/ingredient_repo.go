@@ -19,7 +19,7 @@ func NewIngredientRepo(pool *pgxpool.Pool) *IngredientRepo {
 func (r *IngredientRepo) Create(ctx context.Context, ingredient *domain.Ingredient) error {
 	query := `
 		INSERT INTO ingredient (name)
-		VALUES $1
+		VALUES ($1)
 		RETURNING id
 		`
 	err := r.pool.QueryRow(ctx, query, ingredient.Name).Scan(&ingredient.ID)
@@ -93,7 +93,7 @@ func (r *IngredientRepo) GetByName(ctx context.Context, name string) (*domain.In
 func (r *IngredientRepo) Update(ctx context.Context, ingredient *domain.Ingredient) error {
 	query := `
 	UPDATE ingredient
-	SET name $1
+	SET name = $1
 	WHERE id = $2
 	`
 	result, err := r.pool.Exec(ctx, query, ingredient.Name, ingredient.ID)
