@@ -26,15 +26,16 @@ CREATE TABLE ingredient (
 
 CREATE TABLE recipe ( 
 	id bigserial PRIMARY KEY,
-	user_id bigint NOT NULL REFERENCES app_user(id) ON DELETE CASCADE,
-	is_public bool DEFAULT FALSE,
 	name varchar NOT NULL,
+	user_id bigint NOT NULL REFERENCES app_user(id) ON DELETE CASCADE,
 	description text,
 	cooking_time int,
 	price decimal(10, 2),
-	store_in_freezer bool DEFAULT FALSE,
 	expires_after int,
+	store_in_freezer bool DEFAULT FALSE,
 	favorite bool DEFAULT FALSE,
+	fridgeless_store DEFAULT FALSE,
+	is_public bool DEFAULT FALSE,	
 	category_id bigint REFERENCES category(id) ON DELETE SET NULL,
 	cuisine_id bigint REFERENCES cuisine(id) ON DELETE SET NULL,
 	created_at timestamp DEFAULT NOW()
@@ -49,7 +50,7 @@ CREATE TABLE recipe_ingredient (
 
 CREATE TABLE shopping_list ( 
     id bigserial PRIMARY KEY,
-    -- ration_id bigint NOT NULL REFERENCES ration(id) ON DELETE CASCADE, ДОБАВИТЬ!!!
+    ration_id bigint NOT NULL REFERENCES ration(id) ON DELETE CASCADE,
     created_at timestamp DEFAULT NOW()
 );
 

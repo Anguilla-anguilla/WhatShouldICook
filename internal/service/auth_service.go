@@ -11,14 +11,12 @@ import (
 type AuthService struct {
 	secret string
 	ttl    time.Duration
-	user   *UserService
 }
 
-func NewAuthService(secret string, ttl int, userService *UserService) *AuthService {
+func NewAuthService(secret string, ttl int) *AuthService {
 	return &AuthService{
 		secret: secret,
 		ttl:    time.Duration(ttl) * time.Hour,
-		user:   userService,
 	}
 }
 

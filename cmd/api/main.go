@@ -3,6 +3,7 @@ package main
 import (
 	"WhatShouldICook/internal/config"
 	"WhatShouldICook/internal/handler"
+	midd "WhatShouldICook/internal/middleware"
 	"WhatShouldICook/internal/repository/postgres"
 	"WhatShouldICook/internal/service"
 	"context"
@@ -51,22 +52,89 @@ func main() {
 		log.Fatalf("Failed to ping database %v", err)
 	}
 
-	cuisineRepo := postgres.NewCuisineRepo(pool)
-	cuisineService := service.NewCuisineService(cuisineRepo)
-	cuisineHandler := handler.NewCuisineHandler(cuisineService)
-
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer) // при панике возвращает 500 не роняя сервер
 	r.Use(middleware.Timeout(60 * time.Second))
 
+	userRepo := postgres.NewUserRepo(pool)
+	userService := service.NewUserService(userRepo)
+	userHandler := handler.NewUserHandler(userService)
+	authService := service.NewAuthService(cfg.JWT.Secret, cfg.JWT.TTL)
+	authMiddleware := midd.NewAuthMiddleware(authService)
+	authHandler := handler.NewAuthHandler(authService, userService)
+	r.Route("/api/v1/users", func(r chi.Router) {
+		r.Use(authMiddleware.RequireAuth)
+		r.Get("/profile", userHandler.GetByID)
+		r.Put("/profile", userHandler.UpdateProfile)
+		r.Put("/password", userHandler.UpdatePassword)
+		r.Delete("/profile", userHandler.Delete)
+	})
+	r.Route("/api/v1/auth", func(r chi.Router) {
+		r.Post("/register", authHandler.Register)
+		r.Post("/login", authHandler.Login)
+	})
+
+	categoryRepo := postgres.NewCategoryRepo(pool)
+	categoryService := service.NewCategoryService(categoryRepo)
+	categoryHandler := handler.NewCategoryHandler(categoryService)
+	r.Route("/api/v1/categories", func(r chi.Router) {
+		r.Use(authMiddleware.RequireAuth)
+		r.Get("/", categoryHandler.List)
+		r.Get("/{id}", categoryHandler.GetByID)
+	})
+
+	cuisineRepo := postgres.NewCuisineRepo(pool)
+	cuisineService := service.NewCuisineService(cuisineRepo)
+	cuisineHandler := handler.NewCuisineHandler(cuisineService)
 	r.Route("/api/v1/cuisines", func(r chi.Router) {
+		r.Use(authMiddleware.RequireAuth)
 		r.Get("/", cuisineHandler.List)
 		r.Post("/", cuisineHandler.Create)
 		r.Get("/{id}", cuisineHandler.GetByID)
 		// r.Get("/{name}", cuisineHandler.GetByName) доделать, если нужно
 		r.Put("/{id}", cuisineHandler.Update)
 		r.Delete("/{id}", cuisineHandler.Delete)
+	})
+
+	ingredientRepo := postgres.NewIngredientRepo(pool)
+	ingredientService := service.NewIngredientService(ingredientRepo)
+	ingredientHandler := handler.NewIngredientHandler(ingredientService)
+	r.Route("/api/v1/ingredients", func(r chi.Router) {
+		r.Use(authMiddleware.RequireAuth)
+		r.Get("/", ingredientHandler.List)
+		r.Post("/", ingredientHandler.Create)
+		r.Get("/{id}", ingredientHandler.GetByID)
+		r.Put("/{id}", ingredientHandler.Update)
+		r.Delete("/{id}", ingredientHandler.Delete)
+	})
+
+	rationRepo := postgres.NewRationRepo(pool)
+	rationService := service.NewRationService(rationRepo)
+	rationHandler := handler.NewRationHandler(rationService)
+	r.Route("/api/v1/ration", func(r chi.Router) {
+		r.Use(authMiddleware.RequireAuth)
+		r.Get("/{id}", rationHandler.GetByID)
+	})
+
+	recipeRepo := postgres.NewRecipeRepo(pool)
+	recipeService := service.NewRecipeService(recipeRepo)
+	recipeHandler := handler.NewRecipeHandler(recipeService)
+	r.Route("/api/v1/recipes", func(r chi.Router) {
+		r.Use(authMiddleware.RequireAuth)
+		r.Get("/", recipeHandler.List)
+		r.Post("/", recipeHandler.Create)
+		r.Get("/{id}", recipeHandler.GetByID)
+		r.Put("/{id}", recipeHandler.Update)
+		r.Delete("/{id}", recipeHandler.Delete)
+	})
+
+	shoppingListRepo := postgres.NewShoppingListRepo(pool)
+	shoppingListService := service.NewShoppingListService(shoppingListRepo)
+	shoppingListHandler := handler.NewShoppingListHandler(shoppingListService)
+	r.Route("/api/v1/shopping-list", func(r chi.Router) {
+		r.Use(authMiddleware.RequireAuth)
+		r.Get("/{id}", shoppingListHandler.GetByID)
 	})
 
 	srv := &http.Server{
