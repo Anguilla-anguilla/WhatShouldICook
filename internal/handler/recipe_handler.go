@@ -17,6 +17,7 @@ func NewRecipeHandler(service *service.RecipeService) *RecipeHandler {
 }
 
 // ДОБАВИТЬ БОЛЬШЕ ОБРАБОТОК ОШИБОК
+// заменить на errors.Is()
 func (h *RecipeHandler) Create(res http.ResponseWriter, req *http.Request) {
 	userID, ok := req.Context().Value("userID").(int64)
 	if !ok {

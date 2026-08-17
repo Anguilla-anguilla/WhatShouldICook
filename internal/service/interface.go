@@ -53,6 +53,10 @@ type RationRepository interface {
 	Delete(ctx context.Context, id, userID int64) error
 }
 
+type RationRecipeRepository interface {
+	Add(ctx context.Context, rationID, recipeID int64) error
+}
+
 type ShoppingListRepository interface {
 	Create(ctx context.Context, shopping_list *domain.ShoppingList) error
 	GetByID(ctx context.Context, id, userID int64) (*domain.ShoppingList, error)
