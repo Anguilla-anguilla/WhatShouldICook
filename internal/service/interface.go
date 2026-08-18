@@ -47,6 +47,10 @@ type RecipeRepository interface {
 	Delete(ctx context.Context, id, userID int64) error
 }
 
+type RecipeIngredientRepository interface {
+	ListByRecipe(ctx context.Context, recipeID int64) ([]*domain.RecipeIngredient, error)
+}
+
 type RationRepository interface {
 	Create(ctx context.Context, ration *domain.Ration) error
 	GetByID(ctx context.Context, id, userID int64) (*domain.Ration, error)
@@ -61,4 +65,8 @@ type ShoppingListRepository interface {
 	Create(ctx context.Context, shopping_list *domain.ShoppingList) error
 	GetByID(ctx context.Context, id, userID int64) (*domain.ShoppingList, error)
 	Delete(ctx context.Context, id, userID int64) error
+}
+
+type ShoppingListRecipeRepository interface {
+	Add(ctx context.Context, shoppingListID, recipeID int64) error
 }

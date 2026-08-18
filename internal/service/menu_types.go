@@ -10,7 +10,12 @@ type GenerateMenuRequest struct {
 }
 
 type MenuResponse struct {
-	Ration *domain.Ration
-	Recipes []*domain.Recipe
-	ShoppingList *domain.ShoppingList
+	Ration       *domain.Ration
+	Recipes      []*domain.Recipe
+	ShoppingList []ShoppingItem
+}
+
+type ShoppingItem struct {
+	IngredientName string `json:"ingredient_name"`
+	TotalQuantity  int64 `json:"total_quantity"`
 }

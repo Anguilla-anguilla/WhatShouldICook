@@ -21,4 +21,5 @@ var (
 	ErrInvalidPassword  = errors.New("Error: invalid password")
 	ErrPasswordTooShort = errors.New("Error: password is shorter than 8 symbols")
 	ErrInvalidRange     = errors.New("Error: value is out of range")
+	ErrNoRecipes        = errors.New("Error: no recipes provided")
 )

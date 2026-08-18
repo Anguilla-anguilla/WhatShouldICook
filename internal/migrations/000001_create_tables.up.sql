@@ -44,7 +44,7 @@ CREATE TABLE recipe (
 CREATE TABLE recipe_ingredient (
 	recipe_id bigint NOT NULL REFERENCES recipe(id) ON DELETE CASCADE,
 	ingredient_id bigint NOT NULL REFERENCES ingredient(id) ON DELETE CASCADE,
-	quantity varchar(50) NOT NULL ,
+	quantity bigint NOT NULL ,
 	PRIMARY KEY (recipe_id, ingredient_id)
 );
 
