@@ -120,7 +120,29 @@ func (s *RecipeService) Update(ctx context.Context, recipeReq CreateRecipeReques
 	if found, _ := s.repo.GetByName(ctx, recipe.Name, userID); found != nil && found.ID != id {
 		return domain.ErrNotFound
 	}
-	return s.repo.Update(ctx, recipe)
+
+	if len(recipeReq.Ingredients) == 0 {
+		return domain.ErrNoIngredients
+	}
+
+	if err := s.repo.Update(ctx, recipe); err != nil {
+		return err
+	}
+
+	if err := s.repoRI.DeleteByRecipe(ctx, recipe.ID); err != nil {
+		return err
+	}
+	for _, ingredient := range recipeReq.Ingredients {
+		ingr, err := s.ingredientService.GetOrCreate(ctx, ingredient.Name)
+		if err != nil {
+			return err
+		}
+		if err := s.repoRI.Add(ctx, recipe.ID, ingr.ID, ingredient.Quantity); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func (s *RecipeService) Delete(ctx context.Context, id, userID int64) error {

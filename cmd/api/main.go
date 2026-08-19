@@ -111,8 +111,10 @@ func main() {
 		r.Get("/{id}", rationHandler.GetByID)
 	})
 
+	recipeIngredientRepo := postgres.NewRecipeIngredientRepo(pool)
+
 	recipeRepo := postgres.NewRecipeRepo(pool)
-	recipeService := service.NewRecipeService(recipeRepo)
+	recipeService := service.NewRecipeService(recipeRepo, recipeIngredientRepo, ingredientRepo)
 	recipeHandler := handler.NewRecipeHandler(recipeService)
 	r.Route("/api/v1/recipes", func(r chi.Router) {
 		r.Use(authMiddleware.RequireAuth)
@@ -131,7 +133,6 @@ func main() {
 		r.Get("/{id}", shoppingListHandler.GetByID)
 	})
 
-	recipeIngredientRepo := postgres.NewRecipeIngredientRepo(pool)
 	rationRecipeRepo := postgres.NewRationRecipeRepo(pool)
 	shoppingListRecipeRepo := postgres.NewShoppingListRecipeRepo(pool)
 	menuService := service.NewMenuService(

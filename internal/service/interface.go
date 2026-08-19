@@ -50,6 +50,7 @@ type RecipeRepository interface {
 type RecipeIngredientRepository interface {
 	Add(ctx context.Context, recipeID, ingredientID, quantity int64) error
 	ListByRecipe(ctx context.Context, recipeID int64) ([]*domain.RecipeIngredient, error)
+	DeleteByRecipe(ctx context.Context, recipeID int64) error
 }
 
 type RationRepository interface {
