@@ -148,3 +148,46 @@ func (s *RecipeService) Update(ctx context.Context, recipeReq CreateRecipeReques
 func (s *RecipeService) Delete(ctx context.Context, id, userID int64) error {
 	return s.repo.Delete(ctx, id, userID)
 }
+
+func (s *RecipeService) Copy(ctx context.Context, id, userID, ownerID, cuisineID int64) (*domain.Recipe, error) {
+	recipe, err := s.GetByID(ctx, id, ownerID)
+	if err != nil {
+		return nil, err
+	}
+
+	if !recipe.Public {
+		return nil, domain.ErrPermissionDenied
+	}
+
+	newRecipe := &domain.Recipe{
+		Name:            recipe.Name,
+		UserID:          userID,
+		Description:     recipe.Description,
+		CookingTime:     recipe.CookingTime,
+		Price:           recipe.Price,
+		ExpiresAfter:    recipe.ExpiresAfter,
+		StoreInFreezer:  recipe.StoreInFreezer,
+		Favorite:        false,
+		FridgelessStore: recipe.FridgelessStore,
+		Public:          false,
+		CategoryID:      recipe.CategoryID,
+		CuisineID:       cuisineID,
+	}
+
+	if err := s.repo.Create(ctx, newRecipe); err != nil {
+		return nil, err
+	}
+
+	ingredients, err := s.repoRI.ListByRecipe(ctx, recipe.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, ingr := range ingredients {
+		if err := s.repoRI.Add(ctx, newRecipe.ID, ingr.IngredientID, ingr.Quantity); err != nil {
+			return nil, err
+		}
+	}
+
+	return newRecipe, nil
+}

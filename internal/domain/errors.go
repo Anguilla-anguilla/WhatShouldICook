@@ -3,11 +3,12 @@ package domain
 import "errors"
 
 var (
-	ErrNotFound      = errors.New("Error: entity not found")
-	ErrAlreadyExists = errors.New("Error: entity already exists")
-	ErrUnauthorized  = errors.New("Error: missing permission")
-	ErrNoIngredients = errors.New("Error: no ingredients provided")
-	ErrNoRecipes     = errors.New("Error: no recipes provided")
+	ErrNotFound         = errors.New("Error: entity not found")
+	ErrAlreadyExists    = errors.New("Error: entity already exists")
+	ErrUnauthorized     = errors.New("Error: missing permission")
+	ErrNoIngredients    = errors.New("Error: no ingredients provided")
+	ErrNoRecipes        = errors.New("Error: no recipes provided")
+	ErrPermissionDenied = errors.New("Error: no access")
 )
 
 var (

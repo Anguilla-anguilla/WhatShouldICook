@@ -208,3 +208,42 @@ func (h *RecipeHandler) Delete(res http.ResponseWriter, req *http.Request) {
 	}
 	res.WriteHeader(http.StatusNoContent)
 }
+
+func (h *RecipeHandler) Copy(res http.ResponseWriter, req *http.Request) {
+	idStr := req.PathValue("id")
+	if idStr == "" {
+		http.Error(res, "Missing id", http.StatusBadRequest)
+		return
+	}
+
+	id, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil {
+		http.Error(res, "Invalid id", http.StatusBadRequest)
+		return
+	}
+
+	userID, ok := req.Context().Value("userID").(int64)
+	if !ok {
+		http.Error(res, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	var request struct {
+		CuisineID int64 `json:"cuisine_id"`
+		OwnerID   int64 `json:"owner_id"`
+	}
+	if err := json.NewDecoder(req.Body).Decode(&request); err != nil {
+		http.Error(res, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+
+	recipe, err := h.service.Copy(req.Context(), id, userID, request.OwnerID, request.CuisineID)
+	if err != nil {
+		http.Error(res, "Internal error", http.StatusInternalServerError)
+		return
+	}
+
+	res.Header().Set("Content-Type", "application/json")
+	res.WriteHeader(http.StatusCreated)
+	json.NewEncoder(res).Encode(recipe)
+}
