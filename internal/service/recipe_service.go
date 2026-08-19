@@ -146,6 +146,10 @@ func (s *RecipeService) Update(ctx context.Context, recipeReq CreateRecipeReques
 }
 
 func (s *RecipeService) Delete(ctx context.Context, id, userID int64) error {
+	err := s.repoRI.DeleteByRecipe(ctx, id)
+	if err != nil {
+		return err
+	}
 	return s.repo.Delete(ctx, id, userID)
 }
 

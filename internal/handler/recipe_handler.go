@@ -239,7 +239,14 @@ func (h *RecipeHandler) Copy(res http.ResponseWriter, req *http.Request) {
 
 	recipe, err := h.service.Copy(req.Context(), id, userID, request.OwnerID, request.CuisineID)
 	if err != nil {
-		http.Error(res, "Internal error", http.StatusInternalServerError)
+		switch err {
+		case domain.ErrPermissionDenied:
+			http.Error(res, "Recipe is not public", http.StatusForbidden)
+		case domain.ErrNotFound:
+			http.Error(res, "Recipe not found", http.StatusNotFound)
+		default:
+			http.Error(res, "Internal error", http.StatusInternalServerError)
+		}
 		return
 	}
 

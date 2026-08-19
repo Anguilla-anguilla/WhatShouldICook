@@ -123,6 +123,7 @@ func main() {
 		r.Get("/{id}", recipeHandler.GetByID)
 		r.Put("/{id}", recipeHandler.Update)
 		r.Delete("/{id}", recipeHandler.Delete)
+		r.Post("{id}/copy", recipeHandler.Copy)
 	})
 
 	shoppingListRepo := postgres.NewShoppingListRepo(pool)
