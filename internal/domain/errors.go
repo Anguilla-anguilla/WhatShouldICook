@@ -6,6 +6,8 @@ var (
 	ErrNotFound      = errors.New("Error: entity not found")
 	ErrAlreadyExists = errors.New("Error: entity already exists")
 	ErrUnauthorized  = errors.New("Error: missing permission")
+	ErrNoIngredients = errors.New("Error: no ingredients provided")
+	ErrNoRecipes     = errors.New("Error: no recipes provided")
 )
 
 var (
@@ -21,5 +23,4 @@ var (
 	ErrInvalidPassword  = errors.New("Error: invalid password")
 	ErrPasswordTooShort = errors.New("Error: password is shorter than 8 symbols")
 	ErrInvalidRange     = errors.New("Error: value is out of range")
-	ErrNoRecipes        = errors.New("Error: no recipes provided")
 )

@@ -16,6 +16,26 @@ type MenuService struct {
 	shoppingListRecipeRepo ShoppingListRecipeRepository
 }
 
+func NewMenuService(
+	recipeRepo RecipeRepository,
+	recipeIngredientRepo RecipeIngredientRepository,
+	rationRepo RationRepository,
+	rationRecipeRepo RationRecipeRepository,
+	shoppingListRepo ShoppingListRepository,
+	shoppingListRecipeRepo ShoppingListRecipeRepository,
+	ingredientRepo IngredientRepository,
+) *MenuService {
+	return &MenuService{
+		recipeRepo:             recipeRepo,
+		recipeIngredientRepo:   recipeIngredientRepo,
+		rationRepo:             rationRepo,
+		rationRecipeRepo:       rationRecipeRepo,
+		shoppingListRepo:       shoppingListRepo,
+		shoppingListRecipeRepo: shoppingListRecipeRepo,
+		ingredientRepo:         ingredientRepo,
+	}
+}
+
 func (s *MenuService) GenerateMenu(ctx context.Context, req GenerateMenuRequest) (*MenuResponse, error) {
 	recipes, err := s.selectRecipes(ctx, req)
 	if err != nil {

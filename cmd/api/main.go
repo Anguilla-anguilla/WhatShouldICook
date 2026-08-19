@@ -41,13 +41,7 @@ func main() {
 		log.Fatalf("Failed to create connection pool: %v", err)
 	}
 	defer pool.Close()
-	// проверка стабильности связи БД
 
-	// conn, err := pool.Acquire(context.Background())
-	// if err != nil {
-	// 	log.Fatalf("Failed to acquire connection: %v", err)
-	// }
-	// defer conn.Release()
 	if err := pool.Ping(ctx); err != nil {
 		log.Fatalf("Failed to ping database %v", err)
 	}
@@ -135,6 +129,24 @@ func main() {
 	r.Route("/api/v1/shopping-list", func(r chi.Router) {
 		r.Use(authMiddleware.RequireAuth)
 		r.Get("/{id}", shoppingListHandler.GetByID)
+	})
+
+	recipeIngredientRepo := postgres.NewRecipeIngredientRepo(pool)
+	rationRecipeRepo := postgres.NewRationRecipeRepo(pool)
+	shoppingListRecipeRepo := postgres.NewShoppingListRecipeRepo(pool)
+	menuService := service.NewMenuService(
+		recipeRepo,
+		recipeIngredientRepo,
+		rationRepo,
+		rationRecipeRepo,
+		shoppingListRepo,
+		shoppingListRecipeRepo,
+		ingredientRepo,
+	)
+	menuHandler := handler.NewMenuHandler(menuService)
+	r.Route("/api/v1/menu", func(r chi.Router) {
+		r.Use(authMiddleware.RequireAuth)
+		r.Post("/generate", menuHandler.Generate)
 	})
 
 	srv := &http.Server{

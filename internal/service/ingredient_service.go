@@ -13,6 +13,17 @@ func NewIngredientService(repo IngredientRepository) *IngredientService {
 	return &IngredientService{repo: repo}
 }
 
+func (s *IngredientService) GetOrCreate(ctx context.Context, name string) (*domain.Ingredient, error) {
+	ingredient, err := s.GetByName(ctx, name)
+	if err == domain.ErrNotFound {
+		ingredient, err = s.Create(ctx, name)
+	}
+	if err != nil {
+		return nil, err
+	}
+	return ingredient, nil
+}
+
 func (s *IngredientService) Create(ctx context.Context, name string) (*domain.Ingredient, error) {
 	ingredient := &domain.Ingredient{Name: name}
 	if err := ingredient.Validate(); err != nil {

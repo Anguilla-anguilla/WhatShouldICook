@@ -23,15 +23,21 @@ type CreateRecipeRequest struct {
 // Потом добавить юнит
 type IngredientRequest struct {
 	Name     string `json:"name"`
-	Quantity int64 `json:"quantity"`
-}
-// ДОПИСАТЬ
-type RecipeService struct {
-	repo RecipeRepository
+	Quantity int64  `json:"quantity"`
 }
 
-func NewRecipeService(repo RecipeRepository) *RecipeService {
-	return &RecipeService{repo: repo}
+type RecipeService struct {
+	repo              RecipeRepository
+	repoRI            RecipeIngredientRepository
+	ingredientService *IngredientService
+	cuisineService    *CuisineService
+	categoryService   *CategoryService
+}
+
+func NewRecipeService(repo RecipeRepository, repoRI RecipeIngredientRepository, repoI IngredientRepository) *RecipeService {
+	return &RecipeService{repo: repo,
+		repoRI: repoRI,
+	}
 }
 
 func (s *RecipeService) Create(ctx context.Context, recipeReq CreateRecipeRequest, userID int64) (*domain.Recipe, error) {
@@ -56,8 +62,30 @@ func (s *RecipeService) Create(ctx context.Context, recipeReq CreateRecipeReques
 	if found, _ := s.repo.GetByName(ctx, recipe.Name, userID); found != nil {
 		return nil, domain.ErrAlreadyExists
 	}
+
+	if _, err := s.cuisineService.GetByID(ctx, recipeReq.CuisineID, userID); err != nil {
+		return nil, err
+	}
+
+	if _, err := s.categoryService.GetByID(ctx, recipeReq.CategoryID); err != nil {
+		return nil, err
+	}
+	if len(recipeReq.Ingredients) == 0 {
+		return nil, domain.ErrNoIngredients
+	}
+
 	if err := s.repo.Create(ctx, recipe); err != nil {
 		return nil, err
+	}
+
+	for _, ingredient := range recipeReq.Ingredients {
+		ingr, err := s.ingredientService.GetOrCreate(ctx, ingredient.Name)
+		if err != nil {
+			return nil, err
+		}
+		if err := s.repoRI.Add(ctx, recipe.ID, ingr.ID, ingredient.Quantity); err != nil {
+			return nil, err
+		}
 	}
 	return recipe, nil
 }

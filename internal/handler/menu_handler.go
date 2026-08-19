@@ -14,7 +14,7 @@ func NewMenuHandler(service *service.MenuService) *MenuHandler {
 	return &MenuHandler{service: service}
 }
 
-func (h *MenuHandler) Generate(res http.ResponseWriter, req http.Request) {
+func (h *MenuHandler) Generate(res http.ResponseWriter, req *http.Request) {
 	userID, ok := req.Context().Value("userID").(int64)
 	if !ok {
 		http.Error(res, "Unauthorized", http.StatusUnauthorized)
