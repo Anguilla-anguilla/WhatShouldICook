@@ -79,11 +79,11 @@ func (u *UserRepo) GetByUserName(ctx context.Context, name string) (*domain.User
 func (u *UserRepo) GetByEmail(ctx context.Context, email string) (*domain.User, error) {
 	query := `
 		SELECT id, username, email, password_hash
-		FROM user
+		FROM app_user
 		WHERE email = $1
 		`
 	var user domain.User
-	err := u.pool.QueryRow(ctx, query, email). Scan(
+	err := u.pool.QueryRow(ctx, query, email).Scan(
 		&user.ID,
 		&user.UserName,
 		&user.Email,

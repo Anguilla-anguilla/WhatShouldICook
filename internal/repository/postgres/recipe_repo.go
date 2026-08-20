@@ -26,13 +26,13 @@ func (r *RecipeRepo) Create(ctx context.Context, recipe *domain.Recipe) error {
 							cooking_time, 
 							price, 
 							expires_after, 
-							is_store_in_freezer, 
-							is_favorite,
-							frigeless_store,
+							store_in_freezer, 
+							favorite,
+							fridgeless_store,
 							is_public,
 							category_id, 
 							cuisine_id)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
 		RETURNING id, created_at
 		`
 	err := r.pool.QueryRow(ctx, query,
@@ -61,9 +61,9 @@ func (r *RecipeRepo) List(ctx context.Context, filters service.RecipeFilters) ([
 				cooking_time, 
 				price, 
 				expires_after, 
-				is_store_in_freezer, 
-				is_favorite,
-				frigeless_store,
+				store_in_freezer, 
+				favorite,
+				fridgeless_store,
 				is_public,
 				category_id, 
 				cuisine_id
@@ -86,7 +86,7 @@ func (r *RecipeRepo) List(ctx context.Context, filters service.RecipeFilters) ([
 	}
 
 	if filters.Favorite != nil {
-		query += fmt.Sprintf(" AND is_favorite = $%d", argIndex)
+		query += fmt.Sprintf(" AND favorite = $%d", argIndex)
 		args = append(args, *filters.Favorite)
 		argIndex++
 	}
@@ -145,9 +145,9 @@ func (r *RecipeRepo) GetByID(ctx context.Context, id, userID int64) (*domain.Rec
 				cooking_time,
 				price,
 				expires_after,
-				is_store_in_freezer,
-				is_favorite,
-				frigeless_store,
+				store_in_freezer,
+				favorite,
+				fridgeless_store,
 				is_public,
 				category_id,
 				cuisine_id
@@ -188,9 +188,9 @@ func (r *RecipeRepo) GetByName(ctx context.Context, name string, userID int64) (
 				cooking_time,
 				price,
 				expires_after,
-				is_store_in_freezer,
-				is_favorite,
-				frigeless_store,
+				store_in_freezer,
+				favorite,
+				fridgeless_store,
 				is_public,
 				category_id,
 				cuisine_id
@@ -230,9 +230,9 @@ func (r *RecipeRepo) Update(ctx context.Context, recipe *domain.Recipe) error {
 			cooking_time = $3,
 			price = $4,
 			expires_after = $5,
-			is_store_in_freezer = $6,
-			is_favorite = $7,
-			frigeless_store =$8,
+			store_in_freezer = $6,
+			favorite = $7,
+			fridgeless_store =$8,
 			is_public = $9,
 			category_id = $10,
 			cuisine_id = $11
