@@ -34,7 +34,7 @@ CREATE TABLE recipe (
 	expires_after int,
 	store_in_freezer bool DEFAULT FALSE,
 	favorite bool DEFAULT FALSE,
-	fridgeless_store DEFAULT FALSE,
+	fridgeless_store int DEFAULT 1,
 	is_public bool DEFAULT FALSE,	
 	category_id bigint REFERENCES category(id) ON DELETE SET NULL,
 	cuisine_id bigint REFERENCES cuisine(id) ON DELETE SET NULL,
@@ -46,6 +46,13 @@ CREATE TABLE recipe_ingredient (
 	ingredient_id bigint NOT NULL REFERENCES ingredient(id) ON DELETE CASCADE,
 	quantity bigint NOT NULL ,
 	PRIMARY KEY (recipe_id, ingredient_id)
+);
+
+CREATE TABLE ration (
+	id bigserial PRIMARY KEY,
+	user_id bigint NOT NULL REFERENCES app_user(id) ON DELETE CASCADE,
+	duration int DEFAULT 7,
+	created_at timestamp DEFAULT NOW()
 );
 
 CREATE TABLE shopping_list ( 
@@ -60,12 +67,6 @@ CREATE TABLE shopping_list_recipe (
 	PRIMARY KEY (shopping_list_id, recipe_id)
 );
 
-CREATE TABLE ration (
-	id bigserial PRIMARY KEY,
-	user_id bigint NOT NULL REFERENCES app_user(id) ON DELETE CASCADE,
-	duration int DEFAULT 7,
-	created_at timestamp DEFAULT NOW()
-);
 
 CREATE TABLE ration_recipe (
 	ration_id bigint NOT NULL REFERENCES ration(id) ON DELETE CASCADE,

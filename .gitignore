@@ -1,7 +1,4 @@
 .env
 /postman
 
-# Временно, потом убрать
-*.yml
-*_test.go
 
