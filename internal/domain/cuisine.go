@@ -10,8 +10,11 @@ type Cuisine struct {
 }
 
 func (c *Cuisine) Validate() error {
+	if c.UserID <= 0 {
+		return ErrInvalidUser
+	}
 	str := strings.ReplaceAll(c.Name, " ", "")
-	if str== "" {
+	if str == "" {
 		return ErrEmptyName
 	}
 	return nil

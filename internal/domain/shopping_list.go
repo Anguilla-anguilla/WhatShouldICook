@@ -9,7 +9,7 @@ type ShoppingList struct {
 }
 
 func (r *ShoppingList) Validate() error {
-	if r.RationID == 0 {
+	if r.RationID <= 0 {
 		return ErrEmptyRation
 	}
 	return nil

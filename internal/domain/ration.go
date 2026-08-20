@@ -10,7 +10,7 @@ type Ration struct {
 }
 
 func (r *Ration) Validate() error {
-	if r.UserID == 0 {
+	if r.UserID <= 0 {
 		return ErrInvalidUser
 	}
 	if r.Duration <= 0 {

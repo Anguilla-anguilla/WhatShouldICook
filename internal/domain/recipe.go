@@ -5,26 +5,28 @@ import (
 	"time"
 )
 
-// ДОБАВИТЬ НОВЫЕ МИГРАЦИИ
 type Recipe struct {
 	ID              int64
-	Name            string //not null
+	Name            string
 	UserID          int64
-	Description     string // убрать not null. Если блюдо состоит из одного банана - то не нужно ничего писать
+	Description     string
 	CookingTime     int64
 	Price           float64
 	ExpiresAfter    int64
 	StoreInFreezer  bool
 	Favorite        bool
-	FridgelessStore int64 // сделаю бальную градацию от 0 до 3, в зависимости от выживаемости еды
+	FridgelessStore int64
 	Public          bool
 	// Hidden			bool потом добавлю, а то и так много пока всего
-	CategoryID int64 // not null
+	CategoryID int64
 	CuisineID  int64
 	CreatedAt  time.Time
 }
 
 func (r *Recipe) Validate() error {
+	if r.UserID <= 0 {
+		return ErrInvalidUser
+	}
 	if err := r.validateName(); err != nil {
 		return err
 	}
@@ -38,11 +40,11 @@ func (r *Recipe) Validate() error {
 }
 
 func (r *Recipe) validateFK(category, cuisine int64) error {
-	if category == 0 {
+	if category <= 0 {
 		return ErrEmptyCategory
 	}
-	if cuisine == 0 {
-		return  ErrEmptyCuisine
+	if cuisine <= 0 {
+		return ErrEmptyCuisine
 	}
 	return nil
 }
