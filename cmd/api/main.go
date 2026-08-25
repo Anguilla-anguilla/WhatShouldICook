@@ -18,20 +18,10 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-// Загрузка конфига (config.Load()).
-// Подключение к БД (db.Connect()).
-// Создание репозиториев.
-// Создание сервисов.
-// Создание хендлеров.
-// Настройка роутера (HTTP-маршрутов).
-// Запуск HTTP-сервера.
-// Graceful shutdown (ожидание сигналов Ctrl+C).
-
 func main() {
 
 	cfg, err := config.LoadConfig()
 	if err != nil {
-		// log.Fatal - не выполняет differ
 		log.Fatalf("Failed to load config: %v", err)
 	}
 
@@ -102,14 +92,6 @@ func main() {
 		r.Delete("/{id}", ingredientHandler.Delete)
 	})
 
-	rationRepo := postgres.NewRationRepo(pool)
-	rationService := service.NewRationService(rationRepo)
-	rationHandler := handler.NewRationHandler(rationService)
-	r.Route("/api/v1/ration", func(r chi.Router) {
-		r.Use(authMiddleware.RequireAuth)
-		r.Get("/{id}", rationHandler.GetByID)
-	})
-
 	recipeIngredientRepo := postgres.NewRecipeIngredientRepo(pool)
 
 	recipeRepo := postgres.NewRecipeRepo(pool)
@@ -140,6 +122,14 @@ func main() {
 	})
 
 	rationRecipeRepo := postgres.NewRationRecipeRepo(pool)
+	rationRepo := postgres.NewRationRepo(pool)
+	rationService := service.NewRationService(rationRepo, rationRecipeRepo, recipeService)
+	rationHandler := handler.NewRationHandler(rationService)
+	r.Route("/api/v1/ration", func(r chi.Router) {
+		r.Use(authMiddleware.RequireAuth)
+		r.Get("/{id}", rationHandler.GetByID)
+	})
+
 	shoppingListRecipeRepo := postgres.NewShoppingListRecipeRepo(pool)
 	menuService := service.NewMenuService(
 		recipeRepo,

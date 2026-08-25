@@ -61,6 +61,7 @@ type RationRepository interface {
 
 type RationRecipeRepository interface {
 	Add(ctx context.Context, rationID, recipeID int64) error
+	ListByRation(ctx context.Context, rationID int64) ([]int64, error)
 }
 
 type ShoppingListRepository interface {

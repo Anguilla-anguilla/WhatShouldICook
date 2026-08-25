@@ -80,26 +80,26 @@ func (s *RecipeService) Create(ctx context.Context, recipeReq CreateRecipeReques
 	return recipe, nil
 }
 
-func (s *RecipeService) List(ctx context.Context, filters RecipeFilters) ([]*RecipeResponce, error) {
+func (s *RecipeService) List(ctx context.Context, filters RecipeFilters) ([]*RecipeResponse, error) {
 	recipes, err := s.repo.List(ctx, filters)
 	if err != nil {
 		return nil, err
 	}
 
-	result := make([]*RecipeResponce, 0, len(recipes))
+	result := make([]*RecipeResponse, 0, len(recipes))
 	for _, recipe := range recipes {
 		ri, err := s.repoRI.ListByRecipe(ctx, recipe.ID)
 		if err != nil {
 			return nil, err
 		}
 
-		ingredients := make([]IngredientResponce, 0, len(ri))
+		ingredients := make([]IngredientResponse, 0, len(ri))
 		for _, ingID := range ri {
 			ingredient, err := s.ingredientService.repo.GetByID(ctx, ingID.IngredientID)
 			if err != nil {
 				return nil, err
 			}
-			responce := IngredientResponce{
+			responce := IngredientResponse{
 				ID: ingredient.ID,
 				IngredientRequest: IngredientRequest{
 					Name:     ingredient.Name,
@@ -109,7 +109,7 @@ func (s *RecipeService) List(ctx context.Context, filters RecipeFilters) ([]*Rec
 			ingredients = append(ingredients, responce)
 		}
 
-		recipeRes := RecipeResponce{
+		recipeRes := RecipeResponse{
 			ID: recipe.ID,
 			CreateRecipeRequest: CreateRecipeRequest{
 				Name:            recipe.Name,
@@ -131,7 +131,7 @@ func (s *RecipeService) List(ctx context.Context, filters RecipeFilters) ([]*Rec
 	return result, nil
 }
 
-func (s *RecipeService) GetByID(ctx context.Context, id, userID int64) (*RecipeResponce, error) {
+func (s *RecipeService) GetByID(ctx context.Context, id, userID int64) (*RecipeResponse, error) {
 	recipe, err := s.repo.GetByID(ctx, id, userID)
 	if err != nil {
 		return nil, err
@@ -141,13 +141,13 @@ func (s *RecipeService) GetByID(ctx context.Context, id, userID int64) (*RecipeR
 		return nil, err
 	}
 
-	ingredients := make([]IngredientResponce, 0, len(ri))
+	ingredients := make([]IngredientResponse, 0, len(ri))
 	for _, ingID := range ri {
 		ingredient, err := s.ingredientService.repo.GetByID(ctx, ingID.IngredientID)
 		if err != nil {
 			return nil, err
 		}
-		responce := IngredientResponce{
+		responce := IngredientResponse{
 			ID: ingredient.ID,
 			IngredientRequest: IngredientRequest{
 				Name:     ingredient.Name,
@@ -156,7 +156,7 @@ func (s *RecipeService) GetByID(ctx context.Context, id, userID int64) (*RecipeR
 		}
 		ingredients = append(ingredients, responce)
 	}
-	recipeRes := RecipeResponce{
+	recipeRes := RecipeResponse{
 		ID: recipe.ID,
 		CreateRecipeRequest: CreateRecipeRequest{
 			Name:            recipe.Name,

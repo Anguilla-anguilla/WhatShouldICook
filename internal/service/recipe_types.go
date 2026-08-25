@@ -21,13 +21,13 @@ type IngredientRequest struct {
 	Quantity int64  `json:"quantity"`
 }
 
-type RecipeResponce struct {
+type RecipeResponse struct {
 	ID int64 `json:"id"`
 	CreateRecipeRequest
-	IngredientsRes []IngredientResponce `json:"ingredients_resp"`
+	IngredientsRes []IngredientResponse `json:"ingredients_resp"`
 }
 
-type IngredientResponce struct {
+type IngredientResponse struct {
 	ID int64 `json:"id"`
 	IngredientRequest
 }
