@@ -1,6 +1,7 @@
 package domain
 
 import (
+	"fmt"
 	"strings"
 	"time"
 )
@@ -25,6 +26,7 @@ type Recipe struct {
 
 func (r *Recipe) Validate() error {
 	if r.UserID <= 0 {
+		fmt.Printf("In validation %v", r.UserID)
 		return ErrInvalidUser
 	}
 	if err := r.validateName(); err != nil {

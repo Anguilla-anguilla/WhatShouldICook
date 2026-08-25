@@ -5,27 +5,6 @@ import (
 	"context"
 )
 
-type CreateRecipeRequest struct {
-	Name            string              `json:"name"`
-	Description     string              `json:"description"`
-	CookingTime     int64               `json:"cooking_time"`
-	Price           float64             `json:"price"`
-	ExpiresAfter    int64               `json:"expires_after"`
-	StoreInFreezer  bool                `json:"store_in_freezer"`
-	Favorite        bool                `json:"favorite"`
-	FridgelessStore int64               `json:"fridgeless_store"`
-	Public          bool                `json:"public"`
-	CategoryID      int64               `json:"category_id"`
-	CuisineID       int64               `json:"cuisine_id"`
-	Ingredients     []IngredientRequest `json:"ingredients"`
-}
-
-// Потом добавить юнит
-type IngredientRequest struct {
-	Name     string `json:"name"`
-	Quantity int64  `json:"quantity"`
-}
-
 type RecipeService struct {
 	repo              RecipeRepository
 	repoRI            RecipeIngredientRepository
@@ -34,15 +13,26 @@ type RecipeService struct {
 	categoryService   *CategoryService
 }
 
-func NewRecipeService(repo RecipeRepository, repoRI RecipeIngredientRepository, repoI IngredientRepository) *RecipeService {
-	return &RecipeService{repo: repo,
-		repoRI: repoRI,
+func NewRecipeService(
+	repo RecipeRepository,
+	repoRI RecipeIngredientRepository,
+	ingredientService *IngredientService,
+	cuisineService *CuisineService,
+	categoryService *CategoryService,
+) *RecipeService {
+	return &RecipeService{
+		repo:              repo,
+		repoRI:            repoRI,
+		ingredientService: ingredientService,
+		cuisineService:    cuisineService,
+		categoryService:   categoryService,
 	}
 }
 
 func (s *RecipeService) Create(ctx context.Context, recipeReq CreateRecipeRequest, userID int64) (*domain.Recipe, error) {
 
 	recipe := &domain.Recipe{
+		UserID:          userID,
 		Name:            recipeReq.Name,
 		Description:     recipeReq.Description,
 		CookingTime:     recipeReq.CookingTime,
@@ -63,11 +53,11 @@ func (s *RecipeService) Create(ctx context.Context, recipeReq CreateRecipeReques
 		return nil, domain.ErrAlreadyExists
 	}
 
-	if _, err := s.cuisineService.GetByID(ctx, recipeReq.CuisineID, userID); err != nil {
+	if _, err := s.cuisineService.GetByID(ctx, recipe.CuisineID, userID); err != nil {
 		return nil, err
 	}
 
-	if _, err := s.categoryService.GetByID(ctx, recipeReq.CategoryID); err != nil {
+	if _, err := s.categoryService.GetByID(ctx, recipe.CategoryID); err != nil {
 		return nil, err
 	}
 	if len(recipeReq.Ingredients) == 0 {
@@ -90,12 +80,102 @@ func (s *RecipeService) Create(ctx context.Context, recipeReq CreateRecipeReques
 	return recipe, nil
 }
 
-func (s *RecipeService) List(ctx context.Context, filters RecipeFilters) ([]*domain.Recipe, error) {
-	return s.repo.List(ctx, filters)
+func (s *RecipeService) List(ctx context.Context, filters RecipeFilters) ([]*RecipeResponce, error) {
+	recipes, err := s.repo.List(ctx, filters)
+	if err != nil {
+		return nil, err
+	}
+
+	result := make([]*RecipeResponce, 0, len(recipes))
+	for _, recipe := range recipes {
+		ri, err := s.repoRI.ListByRecipe(ctx, recipe.ID)
+		if err != nil {
+			return nil, err
+		}
+
+		ingredients := make([]IngredientResponce, 0, len(ri))
+		for _, ingID := range ri {
+			ingredient, err := s.ingredientService.repo.GetByID(ctx, ingID.IngredientID)
+			if err != nil {
+				return nil, err
+			}
+			responce := IngredientResponce{
+				ID: ingredient.ID,
+				IngredientRequest: IngredientRequest{
+					Name:     ingredient.Name,
+					Quantity: ingID.Quantity,
+				},
+			}
+			ingredients = append(ingredients, responce)
+		}
+
+		recipeRes := RecipeResponce{
+			ID: recipe.ID,
+			CreateRecipeRequest: CreateRecipeRequest{
+				Name:            recipe.Name,
+				Description:     recipe.Description,
+				CookingTime:     recipe.CookingTime,
+				Price:           recipe.Price,
+				ExpiresAfter:    recipe.ExpiresAfter,
+				StoreInFreezer:  recipe.StoreInFreezer,
+				Favorite:        recipe.Favorite,
+				FridgelessStore: recipe.FridgelessStore,
+				Public:          recipe.Public,
+				CategoryID:      recipe.CategoryID,
+				CuisineID:       recipe.CuisineID,
+			},
+			IngredientsRes: ingredients,
+		}
+		result = append(result, &recipeRes)
+	}
+	return result, nil
 }
-func (s *RecipeService) GetByID(ctx context.Context, id, userID int64) (*domain.Recipe, error) {
-	return s.repo.GetByID(ctx, id, userID)
+
+func (s *RecipeService) GetByID(ctx context.Context, id, userID int64) (*RecipeResponce, error) {
+	recipe, err := s.repo.GetByID(ctx, id, userID)
+	if err != nil {
+		return nil, err
+	}
+	ri, err := s.repoRI.ListByRecipe(ctx, recipe.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	ingredients := make([]IngredientResponce, 0, len(ri))
+	for _, ingID := range ri {
+		ingredient, err := s.ingredientService.repo.GetByID(ctx, ingID.IngredientID)
+		if err != nil {
+			return nil, err
+		}
+		responce := IngredientResponce{
+			ID: ingredient.ID,
+			IngredientRequest: IngredientRequest{
+				Name:     ingredient.Name,
+				Quantity: ingID.Quantity,
+			},
+		}
+		ingredients = append(ingredients, responce)
+	}
+	recipeRes := RecipeResponce{
+		ID: recipe.ID,
+		CreateRecipeRequest: CreateRecipeRequest{
+			Name:            recipe.Name,
+			Description:     recipe.Description,
+			CookingTime:     recipe.CookingTime,
+			Price:           recipe.Price,
+			ExpiresAfter:    recipe.ExpiresAfter,
+			StoreInFreezer:  recipe.StoreInFreezer,
+			Favorite:        recipe.Favorite,
+			FridgelessStore: recipe.FridgelessStore,
+			Public:          recipe.Public,
+			CategoryID:      recipe.CategoryID,
+			CuisineID:       recipe.CuisineID,
+		},
+		IngredientsRes: ingredients,
+	}
+	return &recipeRes, nil
 }
+
 func (s *RecipeService) Update(ctx context.Context, recipeReq CreateRecipeRequest, id, userID int64) error {
 
 	recipe := &domain.Recipe{

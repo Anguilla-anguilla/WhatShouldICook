@@ -3,6 +3,7 @@ package service
 import (
 	"WhatShouldICook/internal/domain"
 	"context"
+	"fmt"
 )
 
 type CuisineService struct {
@@ -34,6 +35,7 @@ func (s *CuisineService) Create(ctx context.Context, name, description string, u
 }
 
 func (s *CuisineService) GetByID(ctx context.Context, id, userID int64) (*domain.Cuisine, error) {
+	fmt.Printf("id: %v, user: %v\n", id, userID)
 	return s.repo.GetByID(ctx, id, userID)
 }
 
@@ -41,7 +43,6 @@ func (s *CuisineService) List(ctx context.Context, userID int64) ([]*domain.Cuis
 	return s.repo.List(ctx, userID)
 }
 
-// метод неправильный. Переписать
 func (s *CuisineService) Update(ctx context.Context, cuisine *domain.Cuisine, userID int64) error {
 	if err := cuisine.Validate(); err != nil {
 		return err

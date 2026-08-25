@@ -73,12 +73,22 @@ func (s *UserService) Login(ctx context.Context, username, password string) (*do
 	return user, nil
 }
 
-func (s *UserService) GetByID(ctx context.Context, userID int64) (*domain.User, error) {
-	return s.repo.GetByID(ctx, userID)
+func (s *UserService) GetByID(ctx context.Context, userID int64) (*UserResponse, error) {
+	user, err := s.repo.GetByID(ctx, userID)
+	if err != nil {
+		return nil, err
+	}
+	responce := UserResponse{ID: user.ID, Name: user.UserName, Email: user.Email}
+	return &responce, nil
 }
 
-func (s *UserService) GetByUserName(ctx context.Context, userName string) (*domain.User, error) {
-	return s.repo.GetByUserName(ctx, userName)
+func (s *UserService) GetByUserName(ctx context.Context, userName string) (*UserResponse, error) {
+	user, err := s.repo.GetByUserName(ctx, userName)
+	if err != nil {
+		return nil, err
+	}
+	responce := UserResponse{ID: user.ID, Name: user.UserName, Email: user.Email}
+	return &responce, nil
 }
 
 // не уверена, что оно будет работать. Мэй би, сделать, как в пассворде? хотя хз.

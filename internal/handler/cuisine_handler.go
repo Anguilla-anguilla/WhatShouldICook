@@ -51,7 +51,6 @@ func (c *CuisineHandler) Create(res http.ResponseWriter, req *http.Request) {
 	json.NewEncoder(res).Encode(cuisine)
 }
 
-// мб тут тоже гет бай нэйм нужна? надо подумотьб..
 func (c *CuisineHandler) GetByID(res http.ResponseWriter, req *http.Request) {
 	idStr := req.PathValue("id")
 	if idStr == "" {
@@ -133,10 +132,11 @@ func (c *CuisineHandler) Update(res http.ResponseWriter, req *http.Request) {
 
 	cuisine := &domain.Cuisine{
 		ID:          id,
+		UserID:      userID,
 		Name:        request.Name,
 		Description: request.Description,
 	}
-	// Повторяющееся можно вынести в утилиты или отдельные функции
+
 	if err := c.service.Update(req.Context(), cuisine, userID); err != nil {
 		switch err {
 		case domain.ErrNotFound:

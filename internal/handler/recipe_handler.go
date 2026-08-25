@@ -4,6 +4,7 @@ import (
 	"WhatShouldICook/internal/domain"
 	"WhatShouldICook/internal/service"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 )
@@ -20,6 +21,7 @@ func NewRecipeHandler(service *service.RecipeService) *RecipeHandler {
 // заменить на errors.Is()
 func (h *RecipeHandler) Create(res http.ResponseWriter, req *http.Request) {
 	userID, ok := req.Context().Value("userID").(int64)
+	
 	if !ok {
 		http.Error(res, "Unauthorized", http.StatusUnauthorized)
 		return
@@ -34,6 +36,8 @@ func (h *RecipeHandler) Create(res http.ResponseWriter, req *http.Request) {
 
 	recipe, err := h.service.Create(req.Context(), request, userID)
 	if err != nil {
+		fmt.Printf("%v\n", err)
+		fmt.Printf("%v\n", userID)
 		switch err {
 		case domain.ErrEmptyName:
 			http.Error(res, "Name is required", http.StatusBadRequest)

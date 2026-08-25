@@ -86,7 +86,6 @@ func main() {
 		r.Get("/", cuisineHandler.List)
 		r.Post("/", cuisineHandler.Create)
 		r.Get("/{id}", cuisineHandler.GetByID)
-		// r.Get("/{name}", cuisineHandler.GetByName) доделать, если нужно
 		r.Put("/{id}", cuisineHandler.Update)
 		r.Delete("/{id}", cuisineHandler.Delete)
 	})
@@ -114,7 +113,13 @@ func main() {
 	recipeIngredientRepo := postgres.NewRecipeIngredientRepo(pool)
 
 	recipeRepo := postgres.NewRecipeRepo(pool)
-	recipeService := service.NewRecipeService(recipeRepo, recipeIngredientRepo, ingredientRepo)
+	recipeService := service.NewRecipeService(
+		recipeRepo,
+		recipeIngredientRepo,
+		ingredientService,
+		cuisineService,
+		categoryService,
+	)
 	recipeHandler := handler.NewRecipeHandler(recipeService)
 	r.Route("/api/v1/recipes", func(r chi.Router) {
 		r.Use(authMiddleware.RequireAuth)
@@ -123,7 +128,7 @@ func main() {
 		r.Get("/{id}", recipeHandler.GetByID)
 		r.Put("/{id}", recipeHandler.Update)
 		r.Delete("/{id}", recipeHandler.Delete)
-		r.Post("{id}/copy", recipeHandler.Copy)
+		r.Post("/{id}/copy", recipeHandler.Copy)
 	})
 
 	shoppingListRepo := postgres.NewShoppingListRepo(pool)
