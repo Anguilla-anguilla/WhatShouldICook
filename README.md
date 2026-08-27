@@ -1,39 +1,42 @@
-**What Should I Cook** — RESTful API для генерации рациона на основе загруженных пользователем рецептов. Сервис написан на Go с использованием стандартной библиотеки net/http.
+# What Should I Cook
 
-## Технический стек
-- **Язык:** Go 1.26
-- **База данных:** PostgreSQL 15
-- **Аутентификация:** JWT (access token)
-- **Сервер:** net/http
-- **Роутер:** chi
-- **Запуск программы:** есть Makefile и docker-compose для тестовой базы данных.
-- **Тесты:** testing
+[Читать на русском языке 🇷🇺](README.ru.md)
 
-## Возможности
-- Регистрация и авторизация
-- Рандомная генерация меню по заданным параметрам с автоматическим формированием списка покупок
-- Создание, редактирование и удаление рецептов (CRUD с валидацией входных данных)
-- Возможность публиковать рецепты (настройка приватности) и забирать рецепты других пользователей к себе в коллекцию
-- Возможность задавать рецептам категории в виде определенной кастомизируемой кухни (например, "японской кухня", "осеннее меню" и т.д.)
-- Возможность присваивать рецептам тип блюда ("основное", "напиток", "салат" и т.д.)
+**What Should I Cook** is a RESTful API for automated meal planning and recipe management. The service generates custom menus based on user preferences and automatically compiles shopping lists. Built with Go 1.26 using only the standard `net/http` library and the `chi` router.
 
-## Установка и запуск
+## Tech Stack
+- **Backend:** Go 1.26 (net/http, chi router)
+- **Database:** PostgreSQL 15 & golang-migrate CLI
+- **Auth:** JWT (Access Tokens)
+- **Environment:** Docker, Docker Compose, Makefile
+- **Testing:** Standard `testing` package
 
-#### Необходимое ПО:
-- **Go** (версии 1.26 или выше)
+## Core Features
+- **JWT Authentication:** Secure user registration and login.
+- **Automated Meal Planning:** Generates random menus tailored to user criteria and builds consolidated grocery lists.
+- **Recipe CRUD:** Complete recipe management with robust input validation.
+- **Social Features:** Public/private visibility toggles for recipes, allowing users to copy public community recipes into their personal collections.
+- **Flexible Organization:** Support for custom cuisines (e.g., "Japanese", "Autumn Menu") and distinct dish types (e.g., "Main Course", "Drink", "Salad").
+
+---
+
+## Getting Started
+
+### Prerequisites
+Make sure you have the following installed:
+- **Go** (v1.26+)
 - **Docker** & **Docker Compose**
-- **Golang-Migrate CLI** (для управления миграциями)
-- **Make** (опционально)
+- **Golang-Migrate CLI**
+- **Make** (optional, for shortcuts)
 
-### 1. Клонирование репозитория
-
+### 1. Clone the Repository
 ```bash
 git clone https://github.com/Anguilla-Anguilla/whatshouldicook.git
 cd whatshouldicook
 ```
 
-### 2. Настройка переменных окружения
-Создайте  `.env`  файл и задайте настройки окружения. Например:
+### 2. Configure Environment Variables
+Create a `.env` file in the root directory. Example configuration:
 ```env
 SERVER_PORT=8080
 SERVER_HOST=localhost
@@ -42,83 +45,82 @@ JWT_SECRET=your_secret_key_here
 JWT_TTL=24
 ```
 
-### 3. Запуск PostgreSQL через Docker
-Прежде, чем запускать сам контейнер, убедитесь, что Docker (или Docker Desktop) активен.
+### 3. Spin Up PostgreSQL via Docker
+Ensure Docker Daemon (or Docker Desktop) is running.
 
-**Поднять базу данных:**
+**Start the database:**
 ```bash
 docker-compose up -d
 ```
 
-**Остановить базу данных:**
+**Stop the database:**
 ```bash
-docker-compose down          # Остановить контейнеры ИЛИ
-docker-compose down -v       # Остановить и удалить том с данными
+docker-compose down          # Stops containers
+docker-compose down -v       # Stops containers and wipes database volumes
 ```
 
-### 4. Применение миграций
-*Если у вас установлен инструмент [golang-migrate](https://github.com).*
-
-**Через Makefile:**
+### 4. Run Database Migrations
+**Using Makefile:**
 ```bash
 make migrate-up
 ```
-**Вручную:**
+
+**Manually:**
 ```bash
 migrate -path internal/migrations -database postgres://testuser:testpass@localhost:5433/testdb?sslmode=disable up
 ```
-### 5. Запуск
-
-**Через Makefile:**
+### 5. Launch the Application
+**Using Makefile:**
 ```bash
 make run
 ```
 
-**Вручную:**
+**Manually:**
 ```bash
 go run cmd/api/main.go
 ```
+---
 
-## Эндпоинты
+## API Reference
 
-| Метод | Эндпоинт | Доступ | Описание | Пример тела запроса |
+| Method | Endpoint | Access | Description | Request Body |
 |-------|----------|--------|----------|---------------------|
-| `POST` | `/api/v1/auth/register` | публичный | Регистрация нового пользователя | `{"username": "User", "email": "email@email.com", "password": "password"}` |
-| `POST` | `/api/v1/auth/login` | публичный | Вход в систему | `{"username": "User", "password": "password"}` |
-| `GET` | `/api/v1/users/profile` | приватный | Получение данных текущего пользователя | — |
-| `PUT` | `/api/v1/users/profile` | приватный | Обновление username и/или email | `{"username": "Updated", "email": "new@mail.com"}` |
-| `PUT` | `/api/v1/users/password` | приватный | Смена пароля | `{"old_password": "password", "new_password": "wordpass"}` |
-| `DELETE` | `/api/v1/users/profile` | приватный | Удаление пользователя | — |
-| `POST` | `/api/v1/cuisines/` | приватный | Создание категории кухни | `{"name": "Cuisine", "description": ""}` |
-| `GET` | `/api/v1/cuisines/{id}` | приватный | Получение данных о конкретной кухне | — |
-| `GET` | `/api/v1/cuisines/` | приватный | Получение всех кухонь пользователя | — |
-| `PUT` | `/api/v1/cuisines/{id}` | приватный | Обновление данных кухни | `{"name": "Cuisine Updated", "description": ""}` |
-| `DELETE` | `/api/v1/cuisines/{id}` | приватный | Удаление кухни | — |
-| `GET` | `/api/v1/categories/{id}` | приватный | Получение категории блюда | — |
-| `GET` | `/api/v1/categories/` | приватный | Получение всех категорий блюд | — |
-| `POST` | `/api/v1/ingredients/` | приватный | Создание ингредиента | `{"name": "ice"}` |
-| `GET` | `/api/v1/ingredients/{id}` | приватный | Получение ингредиента | — |
-| `GET` | `/api/v1/ingredients/` | приватный | Получение списка всех ингредиентов | — |
-| `PUT` | `/api/v1/ingredients/{id}` | приватный | Обновление названия ингредиента | `{"name": "new_name"}` |
-| `DELETE` | `/api/v1/ingredients/{id}` | приватный | Удаление ингредиента | — |
-| `POST` | `/api/v1/recipes/` | приватный | Создание рецепта | См. [пример создания рецепта](#пример-создания-рецепта) |
-| `POST` | `/api/v1/recipes/{id}/copy` | приватный | Копирование публичного рецепта другого пользователя | `{"cuisine_id": 2, "owner_id": 2}` |
-| `GET` | `/api/v1/recipes/{id}` | приватный | Получение рецепта | — |
-| `GET` | `/api/v1/recipes/` | приватный | Получение списка рецептов. Параметры (опционально): `?favorite` (bool), `?public` (bool), `?cuisine_id` (int), `?category_id` (int) | — |
-| `PUT` | `/api/v1/recipes/{id}` | приватный | Обновление рецепта | См. [пример обновления рецепта](#пример-обновления-рецепта) |
-| `DELETE` | `/api/v1/recipes/{id}` | приватный | Удаление рецепта | — |
-| `POST` | `/api/v1/menu/generate` | приватный | Генерация рациона с автоматическим списком покупок | См. [пример генерации меню](#пример-генерации-меню) |
-| `GET` | `/api/v1/ration/{id}` | приватный | Получение списка блюд в рационе | — |
+| `POST` | `/api/v1/auth/register` | Public | Register a new user | `{"username": "User", "email": "email@email.com", "password": "password"}` |
+| `POST` | `/api/v1/auth/login` | Public | Log in and receive a JWT | `{"username": "User", "password": "password"}` |
+| `GET` | `/api/v1/users/profile` | Private | Fetch current user's profile | — |
+| `PUT` | `/api/v1/users/profile` | Private | Update username and/or email | `{"username": "Updated", "email": "new@mail.com"}` |
+| `PUT` | `/api/v1/users/password` | Private | Change password | `{"old_password": "password", "new_password": "wordpass"}` |
+| `DELETE` | `/api/v1/users/profile` | Private | Delete user account | — |
+| `POST` | `/api/v1/cuisines/` | Private | Create a custom cuisine category | `{"name": "Cuisine", "description": ""}` |
+| `GET` | `/api/v1/cuisines/{id}` | Private | Get details for a specific cuisine | — |
+| `GET` | `/api/v1/cuisines/` | Private | List all user cuisines | — |
+| `PUT` | `/api/v1/cuisines/{id}` | Private | Update cuisine details | `{"name": "Cuisine Updated", "description": ""}` |
+| `DELETE` | `/api/v1/cuisines/{id}` | Private | Delete a cuisine category | — |
+| `GET` | `/api/v1/categories/{id}` | Private | Get a dish type | — |
+| `GET` | `/api/v1/categories/` | Private | List all dish types | — |
+| `POST` | `/api/v1/ingredients/` | Private | Create a new ingredient | `{"name": "ice"}` |
+| `GET` | `/api/v1/ingredients/{id}` | Private | Fetch a specific ingredient | — |
+| `GET` | `/api/v1/ingredients/` | Private | List all ingredients | — |
+| `PUT` | `/api/v1/ingredients/{id}` | Private | Rename an ingredient | `{"name": "new_name"}` |
+| `DELETE` | `/api/v1/ingredients/{id}` | Private | Delete an ingredient | — |
+| `POST` | `/api/v1/recipes/` | Private | Create a new recipe | See [Create Recipe Example](#сreate-recipe-example) |
+| `POST` | `/api/v1/recipes/{id}/copy` | Private | Copy another user's public recipe | `{"cuisine_id": 2, "owner_id": 2}` |
+| `GET` | `/api/v1/recipes/{id}` | Private | Fetch a specific recipe | — |
+| `GET` | `/api/v1/recipes/` | Private | List and filter recipes.  **Query (optional):** `favorite` (bool), `public` (bool), `cuisine_id` (int), `category_id` (int) (int), `?category_id` (int) | — |
+| `PUT` | `/api/v1/recipes/{id}` | Private | Update a recipe | See [Update Recipe Example](#update-recipe-example) |
+| `DELETE` | `/api/v1/recipes/{id}` | Private | Delete a recipe | — |
+| `POST` | `/api/v1/menu/generate` | Private | Generate a meal plan and shopping list | See [Generate Menu Example](#generate-menu-example) |
+| `GET` | `/api/v1/ration/{id}` | Private | Get dishes within a specific ration | — |
 
 ---
 
-## Примеры запросов
+## Request Examples
 
-### Пример создания рецепта
+### Create Recipe Example
 ```json
 {
-  "name": "Какая-то еда",
-  "description": "Взять еду, помыть, порезать и приготовить",
+  "name": "Some Food",
+  "description": "Take food, wash it, chop it, and cook it",
   "cooking_time": 20,
   "price": 404,
   "expires_after": 24,
@@ -129,21 +131,20 @@ go run cmd/api/main.go
   "category_id": 1,
   "cuisine_id": 1,
   "ingredients": [
-    {"name": "Сосиски", "quantity": 2},
-    {"name": "Макарошки", "quantity": 1},
-    {"name": "Авокадо", "quantity": 1},
-    {"name": "Огурец", "quantity": 2},
-    {"name": "Кетчуп", "quantity": 1}
+    {"name": "Sausages", "quantity": 2},
+    {"name": "Pasta", "quantity": 1},
+    {"name": "Mango", "quantity": 1},
+    {"name": "Cucumber", "quantity": 2},
+    {"name": "Ketchup", "quantity": 1}
   ]
 }
 ```
 
-### Пример обновления рецепта
-
+### Update Recipe Example
 ``` json
 {
-  "name": "Какая-то еда upd",
-  "description": "Если у вас в холодильнике ничего не осталось...",
+  "name": "Some Food upd",
+  "description": "I'll just leave it to your imagination",
   "cooking_time": 5,
   "price": 200,
   "expires_after": 24,
@@ -154,13 +155,13 @@ go run cmd/api/main.go
   "category_id": 1,
   "cuisine_id": 1,
   "ingredients": [
-    {"name": "Сосиски", "quantity": 2},
-    {"name": "Авокадо", "quantity": 1}
+    {"name": "Ketchup", "quantity": 2},
+    {"name": "Mango", "quantity": 1}
   ]
 }
 ```
 
-### Пример генерации меню
+### Generate Menu Example
 ```json
 {
   "cuisine_id": 2,
