@@ -7,6 +7,6 @@ type RationResponse struct {
 }
 
 type RecipesForRation struct {
-	ID   int64 `json:"recipe_id"`
+	ID   int64  `json:"recipe_id"`
 	Name string `json:"name"`
 }

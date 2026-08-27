@@ -119,7 +119,6 @@ func (s *MenuService) addRecipesToRation(ctx context.Context, rationID int64, re
 	return nil
 }
 
-// Мэй би вообще его удалить и все, что с ним связано
 func (s *MenuService) buildShoppingList(ctx context.Context, recipes []*domain.Recipe, rationID int64) error {
 	if len(recipes) == 0 {
 		return domain.ErrNoRecipes
@@ -140,7 +139,6 @@ func (s *MenuService) buildShoppingList(ctx context.Context, recipes []*domain.R
 	return nil
 }
 
-// ДОБАВИТЬ ЮНИТЫ (А то пользователю будет неудобно с граммовкой)
 func (s *MenuService) buildShoppingItems(ctx context.Context, recipes []*domain.Recipe) ([]ShoppingItem, error) {
 	var shoppingItems []ShoppingItem
 	count := make(map[string]int64)

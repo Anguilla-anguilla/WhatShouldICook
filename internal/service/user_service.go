@@ -58,9 +58,7 @@ func (s *UserService) Register(ctx context.Context, username, email, password st
 	return user, nil
 }
 
-// Вернуться сюда потом (наверное).
 func (s *UserService) Login(ctx context.Context, username, password string) (*domain.User, error) {
-
 	user, err := s.repo.GetByUserName(ctx, username)
 	if err != nil {
 		return nil, err
@@ -91,7 +89,6 @@ func (s *UserService) GetByUserName(ctx context.Context, userName string) (*User
 	return &responce, nil
 }
 
-// не уверена, что оно будет работать. Мэй би, сделать, как в пассворде? хотя хз.
 func (s *UserService) UpdateProfile(ctx context.Context, id int64, username, email string) error {
 	user, err := s.repo.GetByID(ctx, id)
 	if err != nil {

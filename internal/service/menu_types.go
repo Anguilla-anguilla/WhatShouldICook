@@ -17,5 +17,5 @@ type MenuResponse struct {
 
 type ShoppingItem struct {
 	IngredientName string `json:"ingredient_name"`
-	TotalQuantity  int64 `json:"total_quantity"`
+	TotalQuantity  int64  `json:"total_quantity"`
 }

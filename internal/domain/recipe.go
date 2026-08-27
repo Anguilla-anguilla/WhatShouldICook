@@ -18,7 +18,7 @@ type Recipe struct {
 	Favorite        bool
 	FridgelessStore int64
 	Public          bool
-	// Hidden			bool потом добавлю, а то и так много пока всего
+	// Hidden			bool
 	CategoryID int64
 	CuisineID  int64
 	CreatedAt  time.Time

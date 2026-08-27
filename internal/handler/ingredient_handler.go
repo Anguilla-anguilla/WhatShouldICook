@@ -79,7 +79,7 @@ func (h *IngredientHandler) GetByID(res http.ResponseWriter, req *http.Request) 
 	json.NewEncoder(res).Encode(ingredient)
 }
 
-// func (hh IngredientHandler) GetByName() {}
+
 func (h *IngredientHandler) Update(res http.ResponseWriter, req *http.Request) {
 	idStr := req.PathValue("id")
 	if idStr == "" {
