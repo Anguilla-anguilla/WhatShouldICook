@@ -30,8 +30,8 @@
 ### 1. Клонирование репозитория
 
 ```bash
-git clone https://github.com/Anguilla-Anguilla/whatshouldicook.git
-cd whatshouldicook
+git clone https://github.com/Anguilla-anguilla/WhatShouldICook.git
+cd WhatShouldICook
 ```
 
 ### 2. Настройка переменных окружения

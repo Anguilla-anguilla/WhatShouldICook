@@ -31,8 +31,8 @@ Make sure you have the following installed:
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/Anguilla-Anguilla/whatshouldicook.git
-cd whatshouldicook
+git clone https://github.com/Anguilla-anguilla/WhatShouldICook.git
+cd WhatShouldICook
 ```
 
 ### 2. Configure Environment Variables
