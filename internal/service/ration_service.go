@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"fmt"
 )
 
 type RationService struct {
@@ -29,7 +28,7 @@ func (s *RationService) GetByID(ctx context.Context, id, userID int64) (*RationR
 	}
 
 	recipes := make([]RecipesForRation, 0, len(rr))
-	
+
 	for _, recipeID := range rr {
 		recipe, err := s.recipeService.GetByID(ctx, recipeID, userID)
 		if err != nil {
